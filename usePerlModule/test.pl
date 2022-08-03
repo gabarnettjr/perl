@@ -2,7 +2,7 @@
 
 use strict;
 
-use lib "/home/gregorybarne/perl/modules";
+use lib "../modules";
 use MyModule;
 
 my @v = (1, 2, 3, "hello");
