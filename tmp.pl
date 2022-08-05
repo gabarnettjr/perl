@@ -2,7 +2,8 @@
 
 use strict;
 
-my @x = ("a", "b", "c");
+# # Using join
+# my @x = ("a", "b", "c");
+# print "\@x = " . join(" ", @x) . "\n"
 
-print "\@x = " . join(" ", @x) . "\n"
 
