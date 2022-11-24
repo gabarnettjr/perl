@@ -37,13 +37,13 @@ sub matches {
         }
     }
     # Count the number of matches.
-    my $howMany = 0;
+    my $numMatches = 0;
     foreach my $num (@numSame) {
         if ($num == $matchDefinition) {
-            $howMany++;
+            $numMatches++;
         }
     }
-    my $numMatches = ($howMany / $matchDefinition);
+    $numMatches = ($numMatches / $matchDefinition);
     # Return true or false.
     if ($numMatches == $matchesSought) {
         return 1;
