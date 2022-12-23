@@ -16,14 +16,14 @@ sub faces {
 sub new {
     my ($face, $suit) = @_;
 
-    my $f = " " . (join " ", faces) . " ";
-    my $s = " " . (join " ", suits) . " ";
+    my $f = " " . join(" ", Card::faces) . " ";
+    my $s = " " . join(" ", Card::suits) . " ";
     if ($f =~ / $face /) {
         if ($s =~ / $suit /) {
             return ($face, $suit);
         }
     }
-    die "\nInvalid face or suit.\n";
+    die("\nInvalid face or suit.\n");
 }
 
 sub sameFace {
@@ -44,12 +44,30 @@ sub sameSuit {
     return 0;
 }
 
+sub sameCard {
+    my ($c1, $c2) = @_;
+
+    if (Card::sameSuit($c1, $c2)) {
+        if (Card::sameFace($c1, $c2)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 sub toString {
     my $card = shift;
 
-    my $s = sprintf "%-2s of %-8s\n", @{$card}[0], @{$card}[1];
+    my $s = sprintf("%-2s of %-8s\n", @{$card}[0], @{$card}[1]);
     return $s;
 }
 
 return 1;
+
+
+
+
+
+
+
 
