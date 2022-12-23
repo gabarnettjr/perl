@@ -12,21 +12,21 @@ sub new {
     my @d = ();
     foreach my $suit (Card::suits) {
         foreach my $face (Card::faces) {
-            my @c = Card::new $face, $suit;
-            push @d, \@c;
+            my @c = Card::new($face, $suit);
+            push(@d, \@c);
         }
     }
     return @d;
 }
 
-sub shuffle {
+sub shuffleAlternate {
     my $d = shift;
 
     my @ret = ();
-    while ((scalar @{$d}) > 0) {
-        my $ind = int rand (scalar @{$d});
-        push @ret, @{$d}[$ind];
-        splice @{$d}, $ind, 1;
+    while (scalar(@{$d}) > 0) {
+        my $ind = int(rand(scalar(@{$d})));
+        push(@ret, @{$d}[$ind]);
+        splice(@{$d}, $ind, 1);
     }
     return @ret;
 }
@@ -39,13 +39,13 @@ sub swap {
     @{$deck}[$ind2] = $tmp;
 }
 
-sub shuffleAlternate {
+sub shuffle {
     my $deck = shift;
 
-    my $N = (scalar @{$deck});
-    for (my $i = 0; $i < $N; $i++) {
-        my $j = int (rand $N);
-        swap $deck, $i, $j;
+    my $nCards = scalar(@{$deck});
+    for (my $i = 0; $i < $nCards; $i++) {
+        my $j = int(rand($nCards));
+        Deck::swap($deck, $i, $j);
     }
 }
 
@@ -54,7 +54,7 @@ sub toString {
 
     my $s = "\n";
     foreach my $card (@{$d}) {
-        $s .=  (Card::toString $card);
+        $s .=  Card::toString($card);
     }
     return $s;
 }
