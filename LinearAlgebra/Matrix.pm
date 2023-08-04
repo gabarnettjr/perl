@@ -13,3 +13,10 @@ sub new {
     bless(self);
     return $self;
 }
+
+sub numRows {
+    my $self = shift;
+    my $numRows = @{$self}[0];
+    return $numRows if defined $numRows;
+    
+}
