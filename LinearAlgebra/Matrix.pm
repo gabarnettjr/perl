@@ -44,6 +44,6 @@ sub rows {
             push @out, @{$rows}[shift @_];
         }
     }
-    return @out;
+    return \@out;
     die "\nFailed to get the row(s) of the matrix.\n";
 }
