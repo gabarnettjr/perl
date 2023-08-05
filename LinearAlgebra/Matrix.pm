@@ -7,10 +7,8 @@ use warnings;
 sub new {
     my $numRows = undef;
     my $numCols = undef;
-    my $elements = undef;
     my $rows = undef;
-    my $columns = undef;
-    my $self = [$numRows, $numCols, $elements, $rows, $columns];
+    my $self = [$numRows, $numCols, $rows];
     bless(self);
     return $self;
 }
