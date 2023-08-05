@@ -31,7 +31,6 @@ sub rows {
 }
 
 
-
 sub numRows {
     my $self = shift;
     my $numRows = @{$self}[1];
