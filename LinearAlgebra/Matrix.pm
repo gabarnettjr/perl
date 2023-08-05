@@ -32,10 +32,11 @@ sub numCols {
 }
 
 
-sub elements {
+sub rows {
     my $self = shift;
-    my $elements = @{$self}[2];
-    return $elements if defined $elements && ! scalar @_;
-    return @{@{$elements}[shift]}[shift] if defined $elements && (scalar @_) == 2;
-    die "\nFailed to get the elements of the matrix.\n";
+    my $rows = @{$self}[2];
+    return $rows if defined $rows && ! scalar @_;
+    return @{$rows}[shift] if defined $rows && (scalar @_) == 1;
+    return @{@{$rows}[shift]}[shift] if defined $rows && (scalar @_) == 2;
+    die "\nFailed to get the row(s) of the matrix.\n";
 }
