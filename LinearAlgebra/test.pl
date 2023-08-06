@@ -15,8 +15,9 @@ for (my $i = 0; $i < $A->numRows(); $i++) {
         $A->set($i, $j, $i + $j);
     }
 }
-print "\$A = \n";
-$A->disp();
+my $AA = $A->copy();
+print "\$AA = \n";
+$AA->disp();
 
 print "\n";
 
@@ -32,13 +33,13 @@ $C->disp();
 
 print "\n";
 
-my $x = Matrix::new([[1,2,3]]);
+my $x = Matrix::new([[1,2,3], [4,5,6]]);
 print "\$x = \n";
 $x->disp();
 
 print "\n";
 
-my $y = Matrix::new([[3,2,1]]);
+my $y = Matrix::new([[6,5,4], [3,2,1]]);
 print "\$y = \n";
 $y->disp();
 
@@ -65,3 +66,29 @@ print "\n";
 my $w = $u->plus($v);
 print "\$u->plus(\$v) = \n";
 $w->disp();
+
+################################################################################
+
+print "\n";
+
+$A = Matrix::new([[1,1,2], [2,3,-1], [3,5,9]]);
+print "\$A = \n";
+$A->disp();
+
+print "\n";
+
+my $b = Matrix::new([[0], [1], [-2]]);
+print "\$b = \n";
+$b->disp();
+
+print "\n";
+
+my $x = $A->solve($b);
+print "\$x = \n";
+$x->disp();
+
+print "\n";
+
+my $prod = $A->times($x);
+print "\$prod = \n";
+$prod->disp();
