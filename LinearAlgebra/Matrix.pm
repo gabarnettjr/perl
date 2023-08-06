@@ -5,7 +5,7 @@ package Matrix;
 use strict;
 use warnings;
 
-
+################################################################################
 
 sub new {
     my ($items, $numRows, $numCols);
@@ -26,7 +26,8 @@ sub new {
         }
         $items = \@items;
     } else {
-        die "\nBad input for new matrix.  Give ref to array or dimensions.\n";
+        print "\nBad input for new matrix.  Give ref to array or dimensions.\n";
+        die;
     }
     
     my $self = [$items, $numRows, $numCols];
@@ -34,31 +35,34 @@ sub new {
     return $self;
 }
 
-
+################################################################################
 
 sub items {
     my $self = shift;
     my $items = @{$self}[0];
     return $items if defined $items && ! scalar @_;
-    die "\nFailed to get the row(s) of the matrix.\n";
+    print "\nFailed to get the items in the matrix.\n";
+    die;
 }
 
-
+################################################################################
 
 sub numRows {
     my $self = shift;
     my $numRows = @{$self}[1];
     return $numRows if defined $numRows;
-    die "\nFailed to get the number of rows.\n";
+    print "\nFailed to get the number of rows.\n";
+    die;
 }
 
-
+################################################################################
 
 sub numCols {
     my $self = shift;
     my $numCols = @{$self}[2];
     return $numCols if defined $numCols;
-    die "\nFailed to get the number of columns.\n";
+    print "\nFailed to get the number of columns.\n";
+    die;
 }
 
 ################################################################################
@@ -67,21 +71,20 @@ sub disp {
     my $self = shift;
     foreach my $row (@{$self->items()}) {
         foreach my $item (@{$row}) {
-            print "$item ";
+            printf "%3i ", $item;
         }
         print "\n";
     }
 }
 
-
+################################################################################
 
 sub item {
     my $self = shift;
-    
     my $i = shift;
     my $j = shift;
     
-    if ($self->numRows() != 1 && $self->numCols() != 1 || (defined $i) && (defined $j)) {
+    if ($self->numRows() != 1 && $self->numCols() != 1 || defined $i && defined $j) {
         return @{@{$self->items()}[$i]}[$j];
     } elsif ($self->numRows() == 1) {
         return @{@{$self->items()}[0]}[$i];
@@ -90,19 +93,32 @@ sub item {
     }
 }
 
+################################################################################
 
+sub row {
+    my $self = shift;
+    my $i = shift;
+    
+    my $row = @{$self->items()}[$i];
+    my $out = Matrix::new([$row]);
+    
+    return $out;
+}
+
+################################################################################
 
 sub set {
     my $self = shift;
     my $i = shift;
     my $j = shift;
     my $val = shift;
+    
     @{@{$self->items()}[$i]}[$j] = $val;
 }
 
+################################################################################
 
-
-sub add {
+sub plus {
     my $self = shift;
     my $other = shift;
     
@@ -110,7 +126,8 @@ sub add {
     my $numCols = $self->numCols();
     
     if (ref $other && ($numRows != $other->numRows() || $numCols != $other->numCols())) {
-        die "\nMatrices must be the same size to add them together.\n";
+        print "\nMatrices must be the same size to add them together.\n";
+        die;
     }
     
     my $sum = Matrix::new($numRows, $numCols);
@@ -128,7 +145,7 @@ sub add {
     return $sum;
 }
 
-
+################################################################################
 
 sub dot {
     # Return the dot product of two 1D arrays of the same size.
@@ -141,9 +158,11 @@ sub dot {
     my $numCols = $self->numCols();
     
     if ($numRows != $other->numRows() || $numCols != $other->numCols()) {
-        die "\nArrays must be the same size to dot them.\n";
+        print "\nArrays must be the same size to dot them.\n";
+        die;
     } elsif ($numRows != 1 && $numCols != 1) {
-        die "\nThis function is only implemented for 1D arrays.\n";
+        print "\nThis function is only implemented for 1D arrays.\n";
+        die;
     } elsif ($numRows == 1) {
         for (my $j = 0; $j < $numCols; $j++) {
             $dot += $self->item(0, $j) * $other->item(0, $j);
@@ -157,37 +176,86 @@ sub dot {
     return $dot;
 }
 
-
+################################################################################
 
 sub transpose {
     my $self = shift;
-}
-
-
-
-sub mult {
-    # Multiply a matrix by a scalar, or multiply two matrices.
-    my $self = shift;
-    my $other = shift;
     
-    my @out = ();
+    my $out = Matrix::new($self->numCols(), $self->numRows());
     
-    if (ref $other) {
-        # TODO: NEED TO ADD TRANSPOSE FUNCTION BEFORE ADDING THIS PART.
-    } else {
-        for (my $i = 0; $i < $self->numRows(); $i++) {
-            my @tmp = ();
-            for (my $j = 0; $j < $self->numCols(); $j++) {
-                push(@tmp, $other * $self->item($i, $j));
-            }
-            push(@out, \@tmp);
+    for (my $i = 0; $i < $out->numRows(); $i++) {
+        for (my $j = 0; $j < $out->numCols(); $j++) {
+            $out->set($i, $j, $self->item($j, $i));
         }
     }
     
-    my $prod = Matrix::new(\@out);
+    return $out;
+}
+
+################################################################################
+
+sub times {
+    # Multiply a matrix by a scalar, or by another matrix.
+    my $self = shift;
+    my $other = shift;
+    
+    my $prod;
+    
+    if (ref $other) {
+        if ($self->numCols() != $other->numRows()) {
+            print "\n\$numCols of first matrix (" . $self->numCols() . ") must equal \$numRows of second (" . $other->numRows() . ").\n";
+            print "\$first = \n";
+            $self->disp();
+            print "\n";
+            print "\$second = \n";
+            $other->disp();
+            die;
+        }
+        $prod = Matrix::new($self->numRows(), $other->numCols());
+        $other = $other->transpose();
+        for (my $i = 0; $i < $prod->numRows(); $i++) {
+            for (my $j = 0; $j < $prod->numCols(); $j++) {
+                $prod->set($i, $j, $self->row($i)->dot($other->row($j)));
+            }
+        }
+    } else {
+        $prod = Matrix::new($self->numRows(), $self->numCols());
+        for (my $i = 0; $i < $self->numRows(); $i++) {
+            for (my $j = 0; $j < $self->numCols(); $j++) {
+                $prod->set($i, $j, $other * $self->item($i, $j));
+            }
+        }
+    }
+    
     return $prod;
 }
 
+################################################################################
 
+sub dotTimes {
+    my $self = shift;
+    my $other = shift;
+    
+    my $numRows = $self->numRows();
+    my $numCols = $self->numCols();
+    
+    if ($numRows != $other->numRows() || $numCols != $other->numCols()) {
+        print "\nMatrices must be the same size to (dot) multiply them together.\n";
+        die;
+    }
+    
+    my $prod = Matrix::new($numRows, $numCols);
+    
+    for (my $i = 0; $i < $numRows; $i++) {
+        for (my $j = 0; $j < $numCols; $j++) {
+            $prod->set($i, $j, $self->item($i, $j) * $other->item($i, $j));
+        }
+    }
+    
+    return $prod;
+}
+
+################################################################################
 
 return 1;
+
