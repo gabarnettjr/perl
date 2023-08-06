@@ -13,7 +13,7 @@ sub new {
     my $numCols = undef;
     
     my $self = [$rows, $numRows, $numCols];
-    bless($self);
+    bless $self;
     return $self;
 }
 
@@ -93,6 +93,57 @@ sub add {
     
     my $sum = Matrix::new(\@out);
     return $sum;
+}
+
+
+sub dot {
+    # Return the dot product of two 1D arrays of the same size.
+    my $self = shift;
+    my $other = shift;
+    
+    my $dot = 0;
+    
+    my $numRows = $self->numRows();
+    my $numCols = $self->numCols();
+    if ($numRows != $other->numRows() || $numCols != $other->numCols()) {
+        die "\nArrays must be the same size to dot them.\n";
+    } elsif ($numRows != 1 && $numCols != 1) {
+        die "\nThis function is only implemented for 1D arrays.\n";
+    } elsif ($numRows == 1) {
+        for (my $j = 0; $j < $numCols; $j++) {
+            $dot += $self->item(0, $j) * $other->item(0, $j);
+        }
+    } elsif ($numCols == 1) {
+        for (my $i = 0; $i < $numRows; $i++) {
+            $dot += $self->item($i, 0) * $other->item($i, 0);
+        }
+    }
+    
+    return $dot;
+}
+
+
+sub mult {
+    # Multiply a matrix by a scalar, or multiply two matrices.
+    my $self = shift;
+    my $other = shift;
+    
+    my @out = ();
+    
+    if (ref $other) {
+        # TODO: NEED TO ADD TRANSPOSE FUNCTION BEFORE ADDING THIS PART.
+    } else {
+        for (my $i = 0; $i < $self->numRows(); $i++) {
+            my @tmp = ();
+            for (my $j = 0; $j < $self->numCols(); $j++) {
+                push(@tmp, $other * $self->item($i, $j));
+            }
+            push(@out, \@tmp);
+        }
+    }
+    
+    my $prod = Matrix::new(\@out);
+    return $prod;
 }
 
 
