@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+package Matrix;
+
 use strict;
 use warnings;
 
@@ -11,7 +13,7 @@ sub new {
     my $numCols = undef;
     
     my $self = [$rows, $numRows, $numCols];
-    bless(self);
+    bless($self);
     return $self;
 }
 
@@ -25,8 +27,8 @@ sub rows {
         while (scalar @_) {
             push @out, @{$rows}[shift @_];
         }
+        return \@out;
     }
-    return \@out;
     die "\nFailed to get the row(s) of the matrix.\n";
 }
 
@@ -47,3 +49,7 @@ sub numCols {
     return scalar @{@{$self->rows()}[0]};
     die "\nFailed to get the number of columns.\n";
 }
+
+
+return 1;
+
