@@ -40,6 +40,7 @@ sub new {
 
 sub items {
     my $self = shift;
+    
     my $items = @{$self}[0];
     return $items if defined $items && ! scalar @_;
     print "\nFailed to get the items in the matrix.\n";
@@ -50,6 +51,7 @@ sub items {
 
 sub numRows {
     my $self = shift;
+    
     my $numRows = @{$self}[1];
     return $numRows if defined $numRows;
     print "\nFailed to get the number of rows.\n";
@@ -60,6 +62,7 @@ sub numRows {
 
 sub numCols {
     my $self = shift;
+    
     my $numCols = @{$self}[2];
     return $numCols if defined $numCols;
     print "\nFailed to get the number of columns.\n";
@@ -70,6 +73,7 @@ sub numCols {
 
 sub disp {
     my $self = shift;
+    
     foreach my $row (@{$self->items()}) {
         foreach my $item (@{$row}) {
             printf "%10.6f ", $item;
