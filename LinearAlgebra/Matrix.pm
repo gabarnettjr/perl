@@ -9,6 +9,7 @@ use warnings;
 
 sub new {
     my ($items, $numRows, $numCols);
+    
     if (scalar @_ == 1 && ref $_[0]) {
         $items = shift;
         $numRows = scalar @{$items};
