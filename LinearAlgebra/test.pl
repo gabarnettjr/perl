@@ -83,7 +83,7 @@ $b->disp();
 
 print "\n";
 
-my $x = $A->solve($b);
+$x = $A->solve($b);
 print "\$x = \n";
 $x->disp();
 
