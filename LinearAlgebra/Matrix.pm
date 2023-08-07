@@ -86,14 +86,18 @@ sub disp {
 
 sub item {
     my $self = shift;
-    my $i = shift;
-    my $j = shift;
+
+    my ($i, $j);
     
-    if ($self->numRows() != 1 && $self->numCols() != 1 || defined $i && defined $j) {
+    if (scalar @_ == 2) {
+        $i = shift;
+        $j = shift;
         return @{@{$self->items()}[$i]}[$j];
-    } elsif ($self->numRows() == 1) {
-        return @{@{$self->items()}[0]}[$i];
-    } elsif ($self->numCols() == 1) {
+    } elsif (scalar @_ == 1 && $self->numRows() == 1) {
+        $j = shift;
+        return @{@{$self->items()}[0]}[$j];
+    } elsif (scalar @_ == 1 && $self->numCols() == 1) {
+        $i = shift;
         return @{@{$self->items()}[$i]}[0];
     }
 }
