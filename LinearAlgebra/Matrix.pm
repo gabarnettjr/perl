@@ -191,11 +191,16 @@ sub dot {
     # Return the dot product of two 1D arrays of the same size.
     my $self = shift;
     my $other = shift;
-    
-    my $dot = 0;
+
+    if (! ref $other) {
+        print "\nInput must be a 1D array.\n";
+        die;
+    }
     
     my $numRows = $self->numRows();
     my $numCols = $self->numCols();
+
+    my $dot = 0;
     
     if ($numRows != $other->numRows() || $numCols != $other->numCols()) {
         print "\nArrays must be the same size to dot them.\n";
