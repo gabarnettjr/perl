@@ -188,12 +188,12 @@ sub plus {
 ################################################################################
 
 sub dot {
-    # Return the dot product of two 1D arrays of the same size.
+    # Return the dot product of two 1D matrices of the same size.
     my $self = shift;
     my $other = shift;
 
     if (! ref $other) {
-        print "\nInput must be a 1D array.\n";
+        print "\nInput must be a 1D matrix.\n";
         die;
     }
     
@@ -203,10 +203,10 @@ sub dot {
     my $dot = 0;
     
     if ($numRows != $other->numRows() || $numCols != $other->numCols()) {
-        print "\nArrays must be the same size to dot them.\n";
+        print "\nMatrices must be the same size to dot them.\n";
         die;
     } elsif ($numRows != 1 && $numCols != 1) {
-        print "\nThis function is only implemented for 1D arrays.\n";
+        print "\nThis function is only implemented for 1D matrices.\n";
         die;
     } elsif ($numRows == 1) {
         for (my $j = 0; $j < $numCols; $j++) {
