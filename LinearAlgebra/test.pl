@@ -85,11 +85,11 @@ $b->disp();
 print "\n";
 
 $x = $A->solve($b);
-print "\$x = \n";
+print "\$A->solve(\$b) = \n";
 $x->disp();
 
 print "\n";
 
 my $prod = $A->times($x);
-print "\$prod = \n";
+print "\$A->times(\$x) = \n";
 $prod->disp();
