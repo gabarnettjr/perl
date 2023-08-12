@@ -349,19 +349,16 @@ sub solve {
                 $indMax = $i;
             }
         }
-        # Swap row $indmax and row $j.
+        # Swap row $indMax and row $j.
         $A->swapRows($indMax, $j);
         $b->swapRows($indMax, $j);
-        # my $tmp = $b->item($j);
-        # $b->set($j, $b->item($indMax));
-        # $b->set($indMax, $tmp);
         # Zero out the $jth column.
         for (my $i = $j + 1; $i < $nRows; $i++) {
             my $factor = -1 * $A->item($i, $j) / $A->item($j, $j);
             for (my $k = $j; $k < $nCols; $k++) {
                 $A->set($i, $k, $A->item($i, $k) + $factor * $A->item($j, $k));
             }
-            $b->set($i, $b->item($i) + ($factor * $b->item($j)));
+            $b->set($i, $b->item($i) + $factor * $b->item($j));
         }
     }
 
@@ -383,4 +380,3 @@ sub solve {
 ################################################################################
 
 return 1;
-
