@@ -7,7 +7,9 @@ use FindBin;
 use lib "$FindBin::Bin";
 use Matrix;
 
-print "\n";
+print "\n"; ####################################################################
+
+# Multiply two matrices.
 
 my $A = Matrix::new(4, 3);
 for (my $i = 0; $i < $A->numRows(); $i++) {
@@ -31,7 +33,9 @@ my $C = $A->times($B);
 print "\$A->times(\$B) = \n";
 $C->disp();
 
-print "\n";
+print "\n"; ####################################################################
+
+# DotMultiply and plus
 
 my $x = Matrix::new([[1,2,3], [4,5,6]]);
 print "\$x = \n";
@@ -67,9 +71,9 @@ my $w = $u->plus($v);
 print "\$u->plus(\$v) = \n";
 $w->disp();
 
-################################################################################
+print "\n"; ####################################################################
 
-print "\n";
+# Solve a linear system Ax = b for x.
 
 $A = Matrix::new([[1,1,2], [2,3,-1], [3,5,9]]);
 print "\$A = \n";
@@ -91,4 +95,30 @@ print "\n";
 
 my $prod = $A->times($x);
 print "\$A->times(\$x) = \n";
+$prod->disp();
+
+print "\n"; ####################################################################
+
+# Get the inverse of a matrix A.
+
+my $I = Matrix::new(3, 3, "eye");
+print "\$I = \n";
+$I->disp();
+
+print "\n";
+
+my $B = Matrix::new([[4,0,3], [-2,1,9], [8,-2,-1]]);
+print "\$B = \n";
+$B->disp();
+
+print "\n";
+
+my $X = $A->solve($B);
+print "\$A->solve(\$B) = \n";
+$X->disp();
+
+print "\n";
+
+$prod = $A->times($X);
+print "\$A->times(\$X) = \n";
 $prod->disp();
