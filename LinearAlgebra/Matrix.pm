@@ -9,19 +9,25 @@ use warnings;
 
 sub new {
     my ($items, $numRows, $numCols);
+    my $type = "";
     
     if (scalar @_ == 1 && ref $_[0]) {
         $items = shift;
         $numRows = scalar @{$items};
         $numCols = scalar @{@{$items}[0]};
-    } elsif (scalar @_ == 2 && ! ref $_[0] && ! ref $_[1]) {
+    } elsif (scalar @_ >= 2 && ! ref $_[0] && ! ref $_[1]) {
         $numRows = shift;
         $numCols = shift;
+        $type = shift if scalar @_;
         my @items = ();
         for (my $i = 0; $i < $numRows; $i++) {            
             my @tmp = ();
             for (my $j = 0; $j < $numCols; $j++) {
-                push(@tmp, 0);
+                if ($type eq "eye" && $j == $i) {
+                    push(@tmp, 1);
+                } else {
+                    push(@tmp, 0);
+                }
             }
             push(@items, \@tmp);
         }
@@ -330,7 +336,7 @@ sub solve {
     my $b = $rhs->copy();
 
     if ($A->numRows() != $A->numCols() || $A->numRows() != $b->numRows()) {
-        print "\nA should be square.  Rows(A) should equal len(b).\n";
+        print "\nA should be square.  Rows(A) should equal Rows(b).\n";
         die;
     }
     
@@ -358,21 +364,27 @@ sub solve {
             for (my $k = $j; $k < $nCols; $k++) {
                 $A->set($i, $k, $A->item($i, $k) + $factor * $A->item($j, $k));
             }
-            $b->set($i, $b->item($i) + $factor * $b->item($j));
+            for (my $ell = 0; $ell < $b->numCols(); $ell++) {
+                $b->set($i, $ell, $b->item($i, $ell) + $factor * $b->item($j, $ell));
+            }
         }
     }
 
     # Use back substitution to finish solving for @x.
     my $x = $b;
-    $x->set($nRows-1, $b->item($nRows-1) / $A->item($nRows-1, $nRows-1));
+    for (my $ell = 0; $ell < $b->numCols(); $ell++) {
+        $x->set($nRows-1, $ell, $b->item($nRows-1, $ell) / $A->item($nRows-1, $nRows-1));
+    }
     my $k = $nRows;
     for (my $i = $nRows - 2; $i >= 0; $i--) {
         $k--;
-        my $dot = 0;
-        for (my $j = $k; $j < $nRows; $j++) {
-            $dot += ($A->item($i, $j) * $x->item($j));
+        my $dot = Matrix::new(1, $b->numCols());
+        for (my $ell = 0; $ell < $b->numCols(); $ell++) {
+            for (my $j = $k; $j < $nRows; $j++) {
+                $dot->set($ell, $dot->item($ell) + $A->item($i, $j) * $x->item($j, $ell));
+            }
+            $x->set($i, $ell, ($b->item($i, $ell) - $dot->item($ell)) / $A->item($i, $i));
         }
-        $x->set($i, ($b->item($i) - $dot) / $A->item($i, $i));
     }
     return $x;
 }
