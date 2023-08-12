@@ -378,12 +378,12 @@ sub solve {
     my $k = $nRows;
     for (my $i = $nRows - 2; $i >= 0; $i--) {
         $k--;
-        my $dot = Matrix::new(1, $b->numCols());
         for (my $ell = 0; $ell < $b->numCols(); $ell++) {
+            my $dot = 0;
             for (my $j = $k; $j < $nRows; $j++) {
-                $dot->set($ell, $dot->item($ell) + $A->item($i, $j) * $x->item($j, $ell));
+                $dot += ($A->item($i, $j) * $x->item($j, $ell));
             }
-            $x->set($i, $ell, ($b->item($i, $ell) - $dot->item($ell)) / $A->item($i, $i));
+            $x->set($i, $ell, ($b->item($i, $ell) - $dot) / $A->item($i, $i));
         }
     }
     return $x;
