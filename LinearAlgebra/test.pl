@@ -9,7 +9,6 @@ use Matrix;
 
 print "\n";
 
-# my $A = Matrix::new([[1,2,3], [4,5,6], [7,8,9]]);
 my $A = Matrix::new(4, 3);
 for (my $i = 0; $i < $A->numRows(); $i++) {
     for (my $j = 0; $j < $A->numCols(); $j++) {
