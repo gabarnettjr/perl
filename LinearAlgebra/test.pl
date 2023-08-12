@@ -99,7 +99,7 @@ $prod->disp();
 
 print "\n"; ####################################################################
 
-# Get the inverse of a matrix A.
+# Solve AX = B where X and B are matrices, not just column vectors.
 
 my $I = Matrix::new(3, 3, "eye");
 print "\$I = \n";
