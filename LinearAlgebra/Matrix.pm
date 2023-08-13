@@ -33,13 +33,42 @@ sub new {
         }
         $items = \@items;
     } else {
-        print "\nBad input for new matrix.  Give ref to array or dimensions.\n";
-        die;
+        print STDERR "\nBad input for new matrix.  Give ref to array or dimensions.\n";  die;
     }
     
     my $self = [$items, $numRows, $numCols];
     bless $self;
     return $self;
+}
+
+################################################################################
+
+sub items {
+    my $self = shift;
+    
+    my $items = @{$self}[0];
+    return $items if defined $items && ! scalar @_;
+    print STDERR "\nFailed to get the items in the matrix.\n";  die;
+}
+
+################################################################################
+
+sub numRows {
+    my $self = shift;
+    
+    my $numRows = @{$self}[1];
+    return $numRows if defined $numRows;
+    print STDERR "\nFailed to get the number of rows.\n";  die;
+}
+
+################################################################################
+
+sub numCols {
+    my $self = shift;
+    
+    my $numCols = @{$self}[2];
+    return $numCols if defined $numCols;
+    print STDERR "\nFailed to get the number of columns.\n";  die;
 }
 
 ################################################################################
@@ -64,35 +93,55 @@ sub linspace {
 
 ################################################################################
 
-sub items {
-    my $self = shift;
+sub meshgrid {
+    my $x = shift;
+    my $y = shift;
     
-    my $items = @{$self}[0];
-    return $items if defined $items && ! scalar @_;
-    print "\nFailed to get the items in the matrix.\n";
-    die;
+    my $xx = Matrix::new($y->numCols(), $x->numCols());
+    my $yy = Matrix::new($y->numCols(), $x->numCols());
+    
+    for (my $i = 0; $i < $y->numCols(); $i++) {
+        for (my $j = 0; $j < $x->numCols(); $j++) {
+            $xx->set($i, $j, $x->item($j));
+            $yy->set($i, $j, $y->item($i));
+        }
+    }
+    
+    return $xx, $yy;
 }
 
 ################################################################################
 
-sub numRows {
+sub vstack {
     my $self = shift;
+    my $other = shift;
     
-    my $numRows = @{$self}[1];
-    return $numRows if defined $numRows;
-    print "\nFailed to get the number of rows.\n";
-    die;
+    my $out = Matrix::new($self->numRows() + $other->numRows(), $self->numCols());
+    
+    for (my $i = 0; $i < $self->$numRows(); $i++) {
+        for (my $j = 0; $j < $self->numCols(); $j++) {
+            $out->set($i, j, $self->item($i, $j));
+        }
+    }
+    
+    for (my $i = $self->numRows(); $i < $self->numRows() + $other->numRows(); $i++) {
+        for (my $j = 0; $j < $self->numCols(); $j++) {
+            $out->set($i, $j, $other->item($i - $self->numRows(), $j));
+        }
+    }
+    
+    return $out;
 }
 
 ################################################################################
 
-sub numCols {
+sub hstack {
     my $self = shift;
+    my $other = shift;
     
-    my $numCols = @{$self}[2];
-    return $numCols if defined $numCols;
-    print "\nFailed to get the number of columns.\n";
-    die;
+    my $out = $self->transpose()->vstack($other->transpose());
+    
+    return $out->transpose();
 }
 
 ################################################################################
@@ -161,8 +210,7 @@ sub set {
         $val = shift;
         @{@{$self->items()}[$i]}[0] = $val;
     } else {
-        print "\nInputs not understood.\n";
-        die;
+        print STDERR "\nInputs not understood.\n";  die;
     }
 }
 
@@ -192,8 +240,7 @@ sub plus {
     my $numCols = $self->numCols();
     
     if (ref $other && ($numRows != $other->numRows() || $numCols != $other->numCols())) {
-        print "\nMatrices must be the same size to add them together.\n";
-        die;
+        print STDERR "\nMatrices must be the same size to add them together.\n";  die;
     }
     
     my $sum = Matrix::new($numRows, $numCols);
@@ -219,8 +266,7 @@ sub dot {
     my $other = shift;
 
     if (! ref $other) {
-        print "\nInput must be a 1D matrix.\n";
-        die;
+        print STDERR "\nInput must be a 1D matrix.\n";  die;
     }
     
     my $numRows = $self->numRows();
@@ -229,11 +275,9 @@ sub dot {
     my $dot = 0;
     
     if ($numRows != $other->numRows() || $numCols != $other->numCols()) {
-        print "\nMatrices must be the same size to dot them.\n";
-        die;
+        print STDERR "\nMatrices must be the same size to dot them.\n";  die;
     } elsif ($numRows != 1 && $numCols != 1) {
-        print "\nThis function is only implemented for 1D matrices.\n";
-        die;
+        print STDERR "\nThis function is only implemented for 1D matrices.\n";  die;
     } elsif ($numRows == 1) {
         for (my $j = 0; $j < $numCols; $j++) {
             $dot += $self->item(0, $j) * $other->item(0, $j);
@@ -316,11 +360,9 @@ sub dotTimes {
     my $numCols = $self->numCols();
     
     if (! ref $other) {
-        print "\nUse times() to multiply a scalar by a matrix.\n";
-        die;
+        print STDERR "\nUse times() to multiply a scalar by a matrix.\n";  die;
     } elsif ($numRows != $other->numRows() || $numCols != $other->numCols()) {
-        print "\nMatrices must be the same size to (dot) multiply them together.\n";
-        die;
+        print STDERR "\nMatrices must be the same size to (dot) multiply them together.\n";  die;
     }
     
     my $prod = Matrix::new($numRows, $numCols);
@@ -356,8 +398,7 @@ sub solve {
     my $b = $rhs->copy();
 
     if ($A->numRows() != $A->numCols() || $A->numRows() != $b->numRows()) {
-        print "\nA should be square.  Rows(A) should equal Rows(b).\n";
-        die;
+        print STDERR "\nA should be square.  Rows(A) should equal Rows(b).\n";  die;
     }
     
     my $nRows = $A->numRows();
