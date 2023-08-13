@@ -44,6 +44,26 @@ sub new {
 
 ################################################################################
 
+sub linspace {
+    my ($a, $b, $numCols) = @_;
+    
+    my $dx = ($b - $a) / ($numCols - 1);
+    my $item = $a;
+    my @items = ();
+    for (my $i = 0; $i < $numCols; $i++) {
+        push @items, $item;
+        $item += $dx;
+    }
+    my $numRows = 1;
+    my $items = [\@items];
+    
+    my $self = [$items, $numRows, $numCols];
+    bless $self;
+    return $self;
+}
+
+################################################################################
+
 sub items {
     my $self = shift;
     
