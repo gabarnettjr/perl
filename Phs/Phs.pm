@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 
+package Phs;
+
 # Polyharmonic Spline (PHS) interpolation class, for creating Phs objects.
 # Greg Barnett
 # August 2023
-
-package Phs;
 
 use strict;
 use warnings;
