@@ -11,7 +11,7 @@ use Matrix;
 
 my $dims = 2;
 my $exponent = 3;
-my $polyDegree = 1;
+my $polyDegree = 0;
 my $n = 6;
 my $N = 7;
 
@@ -31,9 +31,9 @@ $XX = $XX->flatten();  $YY = $YY->flatten();
 my $NODES = $XX->vstack($YY);
 my $ZZ = Phs::testFunc2d($NODES);
 
-my $phs = Phs::new($dims, $exponent, $nodes, $zz);
-
-my $estimate = $phs->eval($NODES);
+my ($phs, $estimate);
+eval { $phs = Phs::new($dims, $exponent, $polyDegree, $nodes, $zz); };  die if $@;
+eval { $estimate = $phs->evaluate($NODES); };  die if $@;
 
 # $phs->coeffs()->disp();
 
