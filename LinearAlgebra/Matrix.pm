@@ -2,6 +2,10 @@
 
 package Matrix;
 
+# Methods and functions for creating and manipulating Matrix objects.
+# Greg Barnett
+# August 2023
+
 use strict;
 use warnings;
 
