@@ -59,26 +59,34 @@ sub values {
     print STDERR "\nFailed to get the function values at the nodes.\n";  die;
 }
 
-
+################################################################################
 
 sub coeffs {
     my $self = shift;
-    my $coeffs = @{$self}[5};
+    my $coeffs = @{$self}[4];
     return $coeffs if defined $coeffs && ! scalar @_;
-    return $coeffs[shift] if defined $coeffs;
+    return @{$coeffs}[shift] if defined $coeffs;
     
-    my $A = Matrix::new($nodes->numCols(), $nodes->numCols());
+    my $A = $self->phi($self->r($self->nodes()));
+    $coeffs = $A->solve($self->values()->transpose());
     
-    for (my $i = 0; $i < $nodes->numCols(); $i++) {
-        for (my $j = 0; $j < $nodes->numCols(); $j++) {
-            $A->set($i, $j, $self->phi($self->r($self->nodes()))->item($i, $j));
-        }
-    }
+    return $coeffs;
+}
+
+
+
+sub eval {
+    my $self = shift;
+    my $evalPts = shift;
     
-    my $values = $self->values()->transpose();
-    $coeffs = $A->solve($values);
+    my $out = $self->phi($self->r($evalPts))->times($self->coeffs());
     
-    return $coeffs->transpose();
+    # my $out = Matrix::new(1, $evalPts->numCols());
+    # for (my $j = 0; $j < $out->numCols(); $j++) {
+        # $out->set($j, $self->phi($self->r($evalPts))->times($self->coeffs())->item($j));
+    # }
+    
+    return $out->transpose();
 }
 
 
@@ -93,7 +101,7 @@ sub r {
         for (my $j = 0; $j < $self->nodes()->numCols(); $j++) {
             my $tmp = 0;
             for (my $k = 0; $k < $self->dims(); $k++) {
-                $tmp += ($evalPts->item($k, $i) - $nodes->item($k, $j)) ** 2;
+                $tmp += ($evalPts->item($k, $i) - $self->nodes()->item($k, $j)) ** 2;
             }
             $r->set($i, $j, (sqrt $tmp));
         }
@@ -117,6 +125,20 @@ sub phi {
     }
     
     return $phi;
+}
+
+
+
+sub testFunc2d {
+    my $evalPts = shift;
+    
+    my $out = Matrix::new(1, $evalPts->numCols());
+    
+    for (my $j = 0; $j < $out->numCols(); $j++) {
+        $out->set($j, $evalPts->item(0, $j) ** 2 + $evalPts->item(1, $j));
+    }
+    
+    return $out;
 }
 
 
