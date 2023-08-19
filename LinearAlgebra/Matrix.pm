@@ -72,6 +72,32 @@ sub ones {
 
 
 
+sub eye {
+    # New Identity matrix.
+    die if scalar @_ != 2;
+    my ($numRows, $numCols) = @_;
+    
+    my @items = ();
+    
+    for (my $i = 0; $i < $numRows; $i++) {
+        my @tmp = ();
+        for (my $j = 0; $j < $numCols; $j++) {
+            if ($j == $i) {
+                push(@tmp, 1);
+            } else {
+                push(@tmp, 0);
+            }
+        }
+        push(@items, \@tmp);
+    }
+    
+    my $self = [\@items, $numRows, $numCols];
+    bless $self;
+    return $self;
+}
+
+
+
 sub linspace {
     # New 1D matrix of equall-spaced values with known start and finish.
     die if scalar @_ != 3;
