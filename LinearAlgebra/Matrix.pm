@@ -7,33 +7,18 @@ use warnings;
 
 ################################################################################
 
+# CONSTRUCTORS
+
 sub new {
+    # Create new matrix from a 2D array of values.
     my ($items, $numRows, $numCols);
-    my $type = "";
     
     if (scalar @_ == 1 && ref $_[0]) {
         $items = shift;
         $numRows = scalar @{$items};
         $numCols = scalar @{@{$items}[0]};
-    } elsif (scalar @_ >= 2 && ! ref $_[0] && ! ref $_[1]) {
-        $numRows = shift;
-        $numCols = shift;
-        $type = shift if scalar @_;
-        my @items = ();
-        for (my $i = 0; $i < $numRows; $i++) {            
-            my @tmp = ();
-            for (my $j = 0; $j < $numCols; $j++) {
-                if ($type eq "eye" && $j == $i) {
-                    push(@tmp, 1);
-                } else {
-                    push(@tmp, 0);
-                }
-            }
-            push(@items, \@tmp);
-        }
-        $items = \@items;
     } else {
-        print STDERR "\nBad input for new matrix.  Give ref to array or dimensions.\n";  die;
+        print STDERR "\nBad input for new matrix.  Give ref to array.\n";  die;
     }
     
     my $self = [$items, $numRows, $numCols];
@@ -41,39 +26,55 @@ sub new {
     return $self;
 }
 
-################################################################################
 
-sub items {
-    my $self = shift;
+
+sub zeros {
+    # New matrix of zeros.
+    die if scalar @_ != 2;
+    my ($numRows, $numCols) = @_;
     
-    my $items = @{$self}[0];
-    return $items if defined $items && ! scalar @_;
-    print STDERR "\nFailed to get the items in the matrix.\n";  die;
+    my @items = ();
+    
+    for (my $i = 0; $i < $numRows; $i++) {
+        my @tmp = ();
+        for (my $j = 0; $j < $numCols; $j++) {
+            push(@tmp, 0);
+        }
+        push(@items, \@tmp);
+    }
+    
+    my $self = [\@items, $numRows, $numCols];
+    bless $self;
+    return $self;
 }
 
-################################################################################
 
-sub numRows {
-    my $self = shift;
+
+sub ones {
+    # New matrix of ones.
+    die if scalar @_ != 2;
+    my ($numRows, $numCols) = @_;
     
-    my $numRows = @{$self}[1];
-    return $numRows if defined $numRows;
-    print STDERR "\nFailed to get the number of rows.\n";  die;
+    my @items = ();
+    
+    for (my $i = 0; $i < $numRows; $i++) {
+        my @tmp = ();
+        for (my $j = 0; $j < $numCols; $j++) {
+            push(@tmp, 1);
+        }
+        push(@items, \@tmp);
+    }
+    
+    my $self = [\@items, $numRows, $numCols];
+    bless $self;
+    return $self;
 }
 
-################################################################################
 
-sub numCols {
-    my $self = shift;
-    
-    my $numCols = @{$self}[2];
-    return $numCols if defined $numCols;
-    print STDERR "\nFailed to get the number of columns.\n";  die;
-}
-
-################################################################################
 
 sub linspace {
+    # New 1D matrix of equall-spaced values with known start and finish.
+    die if scalar @_ != 3;
     my ($a, $b, $numCols) = @_;
     
     my $dx = ($b - $a) / ($numCols - 1);
@@ -93,12 +94,47 @@ sub linspace {
 
 ################################################################################
 
+# GETTERS
+
+sub items {
+    die if scalar @_ != 1;
+    my $self = shift;
+    
+    my $items = @{$self}[0];
+    return $items if defined $items && ! scalar @_;
+    print STDERR "\nFailed to get the items in the matrix.\n";  die;
+}
+
+
+
+sub numRows {
+    die if scalar @_ != 1;
+    my $self = shift;
+    
+    my $numRows = @{$self}[1];
+    return $numRows if defined $numRows;
+    print STDERR "\nFailed to get the number of rows.\n";  die;
+}
+
+
+
+sub numCols {
+    die if scalar @_ != 1;
+    my $self = shift;
+    
+    my $numCols = @{$self}[2];
+    return $numCols if defined $numCols;
+    print STDERR "\nFailed to get the number of columns.\n";  die;
+}
+
+################################################################################
+
 sub meshgrid {
     my $x = shift;
     my $y = shift;
     
-    my $xx = Matrix::new($y->numCols(), $x->numCols());
-    my $yy = Matrix::new($y->numCols(), $x->numCols());
+    my $xx = Matrix::zeros($y->numCols(), $x->numCols());
+    my $yy = Matrix::zeros($y->numCols(), $x->numCols());
     
     for (my $i = 0; $i < $y->numCols(); $i++) {
         for (my $j = 0; $j < $x->numCols(); $j++) {
@@ -110,13 +146,13 @@ sub meshgrid {
     return ($xx, $yy);
 }
 
-################################################################################
+
 
 sub vstack {
     my $self = shift;
     my $other = shift;
     
-    my $out = Matrix::new($self->numRows() + $other->numRows(), $self->numCols());
+    my $out = Matrix::zeros($self->numRows() + $other->numRows(), $self->numCols());
     
     for (my $i = 0; $i < $self->numRows(); $i++) {
         for (my $j = 0; $j < $self->numCols(); $j++) {
@@ -133,7 +169,7 @@ sub vstack {
     return $out;
 }
 
-################################################################################
+
 
 sub hstack {
     my $self = shift;
@@ -144,12 +180,12 @@ sub hstack {
     return $out->transpose();
 }
 
-################################################################################
+
 
 sub flatten {
     my $self = shift;
     
-    my $out = Matrix::new(1, $self->numRows() * $self->numCols());
+    my $out = Matrix::zeros(1, $self->numRows() * $self->numCols());
     my $k = 0;
     
     for (my $i = 0; $i < $self->numRows(); $i++) {
@@ -162,7 +198,7 @@ sub flatten {
     return $out;
 }
 
-################################################################################
+
 
 sub disp {
     my $self = shift;
@@ -175,7 +211,7 @@ sub disp {
     }
 }
 
-################################################################################
+
 
 sub item {
     my $self = shift;
@@ -195,7 +231,7 @@ sub item {
     }
 }
 
-################################################################################
+
 
 sub row {
     my $self = shift;
@@ -207,7 +243,7 @@ sub row {
     return $out;
 }
 
-################################################################################
+
 
 sub set {
     my $self = shift;
@@ -232,12 +268,12 @@ sub set {
     }
 }
 
-################################################################################
+
 
 sub copy {
     my $self = shift;
     
-    my $out = Matrix::new($self->numRows(), $self->numCols());
+    my $out = Matrix::zeros($self->numRows(), $self->numCols());
     
     for (my $i = 0; $i < $out->numRows(); $i++) {
         for (my $j = 0; $j < $out->numCols; $j++) {
@@ -250,6 +286,8 @@ sub copy {
 
 ################################################################################
 
+# OPERATIONS
+
 sub plus {
     my $self = shift;
     my $other = shift;
@@ -261,7 +299,7 @@ sub plus {
         print STDERR "\nMatrices must be the same size to add them together.\n";  die;
     }
     
-    my $sum = Matrix::new($numRows, $numCols);
+    my $sum = Matrix::zeros($numRows, $numCols);
     
     for (my $i = 0; $i < $numRows; $i++) {
         for (my $j = 0; $j < $numCols; $j++) {
@@ -276,7 +314,7 @@ sub plus {
     return $sum;
 }
 
-################################################################################
+
 
 sub dot {
     # Return the dot product of two 1D matrices of the same size.
@@ -309,12 +347,12 @@ sub dot {
     return $dot;
 }
 
-################################################################################
+
 
 sub transpose {
     my $self = shift;
     
-    my $out = Matrix::new($self->numCols(), $self->numRows());
+    my $out = Matrix::zeros($self->numCols(), $self->numRows());
     
     for (my $i = 0; $i < $out->numRows(); $i++) {
         for (my $j = 0; $j < $out->numCols(); $j++) {
@@ -325,7 +363,7 @@ sub transpose {
     return $out;
 }
 
-################################################################################
+
 
 sub times {
     # Multiply a matrix by a scalar, or by another matrix.
@@ -346,7 +384,7 @@ sub times {
             die;
         }
         
-        $prod = Matrix::new($self->numRows(), $other->numCols());
+        $prod = Matrix::zeros($self->numRows(), $other->numCols());
         $other = $other->transpose();
         
         for (my $i = 0; $i < $prod->numRows(); $i++) {
@@ -357,7 +395,7 @@ sub times {
         
     } else {
         
-        $prod = Matrix::new($self->numRows(), $self->numCols());
+        $prod = Matrix::zeros($self->numRows(), $self->numCols());
         for (my $i = 0; $i < $self->numRows(); $i++) {
             for (my $j = 0; $j < $self->numCols(); $j++) {
                 $prod->set($i, $j, $other * $self->item($i, $j));
@@ -368,7 +406,7 @@ sub times {
     return $prod;
 }
 
-################################################################################
+
 
 sub dotTimes {
     my $self = shift;
@@ -383,7 +421,7 @@ sub dotTimes {
         print STDERR "\nMatrices must be the same size to (dot) multiply them together.\n";  die;
     }
     
-    my $prod = Matrix::new($numRows, $numCols);
+    my $prod = Matrix::zeros($numRows, $numCols);
     
     for (my $i = 0; $i < $numRows; $i++) {
         for (my $j = 0; $j < $numCols; $j++) {
@@ -406,7 +444,7 @@ sub swapRows {
     @{$self->items()}[$j] = $tmp;
 }
 
-################################################################################
+
 
 sub solve {
     my $self = shift;
@@ -471,3 +509,4 @@ sub solve {
 ################################################################################
 
 return 1;
+
