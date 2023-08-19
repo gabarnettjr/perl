@@ -107,7 +107,7 @@ sub meshgrid {
         }
     }
     
-    return $xx, $yy;
+    return ($xx, $yy);
 }
 
 ################################################################################
@@ -118,9 +118,9 @@ sub vstack {
     
     my $out = Matrix::new($self->numRows() + $other->numRows(), $self->numCols());
     
-    for (my $i = 0; $i < $self->$numRows(); $i++) {
+    for (my $i = 0; $i < $self->numRows(); $i++) {
         for (my $j = 0; $j < $self->numCols(); $j++) {
-            $out->set($i, j, $self->item($i, $j));
+            $out->set($i, $j, $self->item($i, $j));
         }
     }
     
@@ -142,6 +142,24 @@ sub hstack {
     my $out = $self->transpose()->vstack($other->transpose());
     
     return $out->transpose();
+}
+
+################################################################################
+
+sub flatten {
+    my $self = shift;
+    
+    my $out = Matrix::new(1, $self->numRows() * $self->numCols());
+    my $k = 0;
+    
+    for (my $i = 0; $i < $self->numRows(); $i++) {
+        for (my $j = 0; $j < $self->numCols(); $j++) {
+            $out->set($k, $self->item($i, $j));
+            $k++;
+        }
+    }
+    
+    return $out;
 }
 
 ################################################################################
