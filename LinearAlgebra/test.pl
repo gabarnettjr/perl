@@ -11,7 +11,7 @@ print "\n"; ####################################################################
 
 # Multiply two matrices.
 
-my $A = Matrix::new(4, 3);
+my $A = Matrix::zeros(4, 3);
 for (my $i = 0; $i < $A->numRows(); $i++) {
     for (my $j = 0; $j < $A->numCols(); $j++) {
         $A->set($i, $j, $i + $j);
@@ -101,13 +101,13 @@ print "\n"; ####################################################################
 
 # Solve AX = B where X and B are matrices, not just column vectors.
 
-my $I = Matrix::new(3, 3, "eye");
+my $I = Matrix::eye(3, 3);
 print "\$I = \n";
 $I->disp();
 
 print "\n";
 
-my $B = Matrix::new([[4,0,3], [-2,1,9], [8,-2,-1]]);
+$B = Matrix::new([[4,0,3], [-2,1,9], [8,-2,-1]]);
 print "\$B = \n";
 $B->disp();
 
