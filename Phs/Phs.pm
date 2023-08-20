@@ -124,15 +124,26 @@ sub poly {
     # The polynomial portion of the combined A-matrix.
     die if scalar @_ != 2;
     my $self = shift;
-    die "\nNon-zero poly degree not yet implemented.\n" if $self->polyDegree() != 0;
+    die "\nPolynomial degrees supported: 0, 1\n" if $self->polyDegree() !~ /^0$|^1$/;
     my $evalPts = shift;
     
     my $poly = Matrix::ones(1, $evalPts->numCols());
     
-    # my $tmp = Matrix::zeros(1, $evalPts->numCols());
+    if ($self->polyDegree() >= 1) {
+        for (my $k = 0; $k < $self->dims(); $k++) {
+            $poly = $poly->vstack($evalPts->row($k));
+        }
+    }
     
-    # if ($self->polyDegree() >= 1) {
-        
+    # if ($self->polyDegree() >= 2) {
+        # my $tmp = 2;
+        # for (my $k1 = 0; $k1 < $self->dims(); $k1++) {
+            # for (my $k2 = 0; $k2 < $self->dims(); $k2++) {
+                # if ($k1 + $k2 == 2) {
+                    # $poly = $poly->hstack($evalPts->row($k1) 
+                # }
+            # }
+        # }
     # }
     
     return $poly;
@@ -200,7 +211,8 @@ sub testFunc2d {
     my $out = Matrix::zeros(1, $evalPts->numCols());
     
     for (my $j = 0; $j < $out->numCols(); $j++) {
-        $out->set($j, $evalPts->item(0, $j) ** 2 + $evalPts->item(1, $j));
+        $out->set($j, $evalPts->item(0, $j) + $evalPts->item(1, $j));
+        # $out->set($j, 1);
     }
     
     return $out;
