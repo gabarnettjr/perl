@@ -211,7 +211,7 @@ sub testFunc2d {
     my $out = Matrix::zeros(1, $evalPts->numCols());
     
     for (my $j = 0; $j < $out->numCols(); $j++) {
-        $out->set($j, $evalPts->item(0, $j) + $evalPts->item(1, $j));
+        $out->set($j, $evalPts->item(0, $j) ** 2 + $evalPts->item(1, $j));
         # $out->set($j, 1);
     }
     
