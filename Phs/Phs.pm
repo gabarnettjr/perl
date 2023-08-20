@@ -15,16 +15,15 @@ use warnings;
 
 sub new {
     # New object of type Phs
-    die if scalar @_ != 5;
-    my $dims = shift;
-    my $exponent = shift;
+    die if scalar @_ != 4;
+    my $dims = undef;
+    my $rbfExponent = shift;
     my $polyDegree = shift;
     my $nodes = shift;
     my $values = shift;
-    
     my $coeffs = undef;
     
-    my $self = [$dims, $exponent, $polyDegree, $nodes, $values, $coeffs];
+    my $self = [$dims, $rbfExponent, $polyDegree, $nodes, $values, $coeffs];
     bless $self;
     eval { $self->coeffs(); };  die if $@;
     return $self;
@@ -41,19 +40,20 @@ sub dims {
     
     my $dims = @{$self}[0];
     return $dims if defined $dims;
+    return $self->nodes()->numRows();
     print STDERR "\nFailed to get dimensions.\n";  die;
 }
 
 
 
-sub exponent {
+sub rbfExponent {
     # Exponent in the PHS basis function (1, 3, 5, ...)
     die if scalar @_ != 1;
     my $self = shift;
     
-    my $exponent = @{$self}[1];
-    return $exponent if defined $exponent;
-    print STDERR "\nFailed to get exponent.\n";  die;
+    my $rbfExponent = @{$self}[1];
+    return $rbfExponent if defined $rbfExponent;
+    print STDERR "\nFailed to get RBF exponent.\n";  die;
 }
 
 
@@ -167,7 +167,7 @@ sub r {
             for (my $k = 0; $k < $self->dims(); $k++) {
                 $tmp += ($evalPts->item($k, $i) - $self->nodes()->item($k, $j)) ** 2;
             }
-            $r->set($i, $j, (sqrt $tmp));
+            $r->set($i, $j, sqrt $tmp);
         }
     }
     
@@ -185,7 +185,7 @@ sub phi {
     
     for (my $i = 0; $i < $phi->numRows(); $i++) {
         for (my $j = 0; $j < $phi->numCols(); $j++) {
-            $phi->set($i, $j, $r->item($i, $j) ** $self->exponent());
+            $phi->set($i, $j, $r->item($i, $j) ** $self->rbfExponent());
         }
     }
     
