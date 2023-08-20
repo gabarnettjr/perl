@@ -462,6 +462,23 @@ sub dotTimes {
     return $prod;
 }
 
+
+
+sub pow {
+    my $self = shift;
+    my $pow = shift;
+    
+    my $out = $self->copy();
+    
+    for (my $i = 0; $i < $self->numRows(); $i++) {
+        for (my $j = 0; $j < $self->numCols(); $j++) {
+            $out->set($i, $j, $self->item($i, $j) ** $pow);
+        }
+    }
+    
+    return $out;
+}
+
 ################################################################################
 
 sub swapRows {
