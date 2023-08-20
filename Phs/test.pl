@@ -36,11 +36,12 @@ eval { $estimate = $phs->evaluate($NODES); };  die if $@;
 
 # $phs->coeffs()->disp();
 
-# print "\$estimate = \n";
-# $estimate->disp();
-# print "\n";
-# print "\$ZZ = \n";
-# $ZZ->disp();
-
+print "\$estimate = \n";
+$estimate->disp();
+print "\n";
+print "\$ZZ = \n";
+$ZZ->disp();
+print "\n";
 my $diff = $estimate->plus($ZZ->times(-1));
+print "\$diff = \n";
 $diff->disp();
