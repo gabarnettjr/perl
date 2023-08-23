@@ -76,7 +76,7 @@ sub polyDegree {
 sub nodes {
     # Inputs where the PHS function has a known output (value)
     my $self = shift;
-    eval { Phs::checkNumInputs("Phs::nodes", '0|1', scalar @_); };
+    eval { Phs::checkNumInputs("Phs::nodes", '^0$|^1$', scalar @_); };
     die $@ if $@;
     
     my $nodes = @{$self}[3];
@@ -90,7 +90,7 @@ sub nodes {
 sub values {
     # Known function values that the PHS must match at the nodes
     my $self = shift;
-    eval { Phs::checkNumInputs("Phs::values", '0|1', scalar @_); };
+    eval { Phs::checkNumInputs("Phs::values", '^0$|^1$', scalar @_); };
     die $@ if $@;
     
     my $values = @{$self}[4];
@@ -104,7 +104,7 @@ sub values {
 sub coeffs {
     # Use the nodes and function values to determine the PHS coefficients.
     my $self = shift;
-    eval { Phs::checkNumInputs("Phs::coeffs", '0|1', scalar @_); };
+    eval { Phs::checkNumInputs("Phs::coeffs", '^0$|^1$', scalar @_); };
     die $@ if $@;
     
     my $coeffs = @{$self}[5];
