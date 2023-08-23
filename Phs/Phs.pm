@@ -36,7 +36,8 @@ sub new {
 sub dims {
     # Number of dimensions of the PHS (1, 2, 3, ...)
     my $self = shift;
-    Phs::checkNumInputs("Phs::dims", '0', scalar @_);
+    eval { Phs::checkNumInputs("Phs::dims", '0', scalar @_); };
+    die $@ if $@;
     
     my $dims = @{$self}[0];
     return $dims if defined $dims;
@@ -49,7 +50,8 @@ sub dims {
 sub rbfExponent {
     # Exponent in the PHS basis function (1, 3, 5, ...)
     my $self = shift;
-    Phs::checkNumInputs("Phs::rbfExponent", '0', scalar @_);
+    eval { Phs::checkNumInputs("Phs::rbfExponent", '0', scalar @_); };
+    die $@ if $@;
     
     my $rbfExponent = @{$self}[1];
     return $rbfExponent if defined $rbfExponent;
@@ -61,7 +63,8 @@ sub rbfExponent {
 sub polyDegree {
     # Highest polynomial degree included in the interpolation basis.
     my $self = shift;
-    Phs::checkNumInputs("Phs::polyDegree", '0', scalar @_);
+    eval { Phs::checkNumInputs("Phs::polyDegree", '0', scalar @_); };
+    die $@ if $@;
     
     my $polyDegree = @{$self}[2];
     return $polyDegree if defined $polyDegree;
@@ -73,7 +76,8 @@ sub polyDegree {
 sub nodes {
     # Inputs where the PHS function has a known output (value)
     my $self = shift;
-    Phs::checkInput("Phs::nodes", '0|1', scalar @_);
+    eval { Phs::checkNumInputs("Phs::nodes", '0|1', scalar @_); };
+    die $@ if $@;
     
     my $nodes = @{$self}[3];
     return $nodes if defined $nodes && ! scalar @_;
@@ -86,7 +90,8 @@ sub nodes {
 sub values {
     # Known function values that the PHS must match at the nodes
     my $self = shift;
-    Phs::checkInput("Phs::values", '0|1', scalar @_);
+    eval { Phs::checkNumInputs("Phs::values", '0|1', scalar @_); };
+    die $@ if $@;
     
     my $values = @{$self}[4];
     return $values if defined $values && ! scalar @_;
@@ -99,7 +104,8 @@ sub values {
 sub coeffs {
     # Use the nodes and function values to determine the PHS coefficients.
     my $self = shift;
-    Phs::checkInput("Phs::coeffs", '0|1', scalar @_);
+    eval { Phs::checkNumInputs("Phs::coeffs", '0|1', scalar @_); };
+    die $@ if $@;
     
     my $coeffs = @{$self}[5];
     return $coeffs if defined $coeffs && ! scalar @_;
@@ -123,7 +129,8 @@ sub coeffs {
 sub poly {
     # The polynomial portion of the combined A-matrix.
     my $self = shift;
-    Phs::checkInput("Phs::poly", '1', scalar @_);
+    eval { Phs::checkNumInputs("Phs::poly", '1', scalar @_); };
+    die $@ if $@;
     my $evalPts = shift;
     
     my $poly = Matrix::ones(1, $evalPts->numCols());
@@ -153,7 +160,8 @@ sub poly {
 sub evaluate {
     # Evaluate the PHS at the $evalPts.
     my $self = shift;
-    Phs::checkInput("Phs::evaluate", '1', scalar @_);
+    eval { Phs::checkNumInputs("Phs::evaluate", '1', scalar @_); };
+    die $@ if $@;
     my $evalPts = shift;
     
     my $out = $self->phi($self->r($evalPts))->hstack($self->poly($evalPts)->transpose())->times($self->coeffs());
@@ -166,7 +174,8 @@ sub evaluate {
 sub r {
     # Radius matrix that can be used to create an A-matrix using an RBF.
     my $self = shift;
-    Phs::checkInput("Phs::r", '1', scalar @_);
+    eval { Phs::checkNumInputs("Phs::r", '1', scalar @_); };
+    die $@ if $@;
     my $evalPts = shift;
     
     my $r = Matrix::zeros($evalPts->numCols(), $self->nodes()->numCols());
@@ -189,7 +198,8 @@ sub r {
 sub phi {
     # The RBF portion of the combined A-matrix.
     my $self = shift;
-    Phs::checkInput("Phs::phi", '1', scalar @_);
+    eval { Phs::checkNumInputs("Phs::phi", '1', scalar @_); };
+    die $@ if $@;
     my $r = shift;
     
     my $phi = $r->copy();
