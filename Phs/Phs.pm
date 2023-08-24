@@ -232,8 +232,7 @@ sub testFunc2d {
 
 sub checkNumInputs {
     my ($subName, $reqArgs, $numArgs) = @_;
-    die "$subName() requires $reqArgs input(s), but you gave $numArgs." if "$numArgs" !~ /$reqArgs/;
+    die "$subName() requires $reqArgs input(s), but you gave $numArgs." if $reqArgs !~ /$numArgs/;
 }
 
 return 1;
-
