@@ -22,7 +22,7 @@ sub new {
         $numRows = scalar @{$items};
         $numCols = scalar @{@{$items}[0]};
     } else {
-        print STDERR "\nBad input for new matrix.  Give ref to array.\n";  die;
+        die "Bad input for new matrix.  Give ref to array.";
     }
     
     my $self = [$items, $numRows, $numCols];
@@ -34,7 +34,7 @@ sub new {
 
 sub zeros {
     # New matrix of zeros.
-    die if scalar @_ != 2;
+    die "Matrix::zeros() requires two inputs, numRows and numCols.    " if scalar @_ != 2;
     my ($numRows, $numCols) = @_;
     
     my @items = ();
@@ -556,4 +556,3 @@ sub solve {
 ################################################################################
 
 return 1;
-
