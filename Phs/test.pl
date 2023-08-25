@@ -16,32 +16,47 @@ my $N = 7;
 
 ################################################################################
 
-my $x = Matrix::linspace(-1, 1, $n);
-my $y = Matrix::linspace(-1, 1, $n);
-my ($xx, $yy) = Matrix::meshgrid($x, $y);
-$xx = $xx->flatten();  $yy = $yy->flatten();
-my $nodes = $xx->vstack($yy);
-my $zz = Phs::testFunc2d($nodes);
+my ($x, $y, $xx, $yy, $nodes, $zz);
+eval {
+    $x = Matrix::linspace(-1, 1, $n);
+    $y = Matrix::linspace(-1, 1, $n);
+    ($xx, $yy) = Matrix::meshgrid($x, $y);
+    $xx = $xx->flatten();  $yy = $yy->flatten();
+    $nodes = $xx->vstack($yy);
+    $zz = Phs::testFunc2d($nodes);
+};
+die if $@;
 
-my $X = Matrix::linspace(-1, 1, $N);
-my $Y = Matrix::linspace(-1, 1, $N);
-my ($XX, $YY) = Matrix::meshgrid($X, $Y);
-$XX = $XX->flatten();  $YY = $YY->flatten();
-my $NODES = $XX->vstack($YY);
-my $ZZ = Phs::testFunc2d($NODES);
+my ($X, $Y, $XX, $YY, $NODES, $ZZ);
+eval {
+    $X = Matrix::linspace(-1, 1, $N);
+    $Y = Matrix::linspace(-1, 1, $N);
+    ($XX, $YY) = Matrix::meshgrid($X, $Y);
+    $XX = $XX->flatten();  $YY = $YY->flatten();
+    $NODES = $XX->vstack($YY);
+    $ZZ = Phs::testFunc2d($NODES);
+};
+die if $@;
 
 my ($phs, $estimate);
-eval { $phs = Phs::new($rbfExponent, $polyDegree, $nodes, $zz); };  die if $@;
-eval { $estimate = $phs->evaluate($NODES); };  die if $@;
+eval {
+    $phs = Phs::new($rbfExponent, $polyDegree, $nodes, $zz);
+    $estimate = $phs->evaluate($NODES);
+};
+die if $@;
 
 # $phs->coeffs()->disp();
 
-print "\$estimate = \n";
-$estimate->disp();
-print "\n";
-print "\$ZZ = \n";
-$ZZ->disp();
-print "\n";
-my $diff = $estimate->plus($ZZ->times(-1));
-print "\$diff = \n";
-$diff->disp();
+my $diff;
+eval {
+    print "\$estimate = \n";
+    $estimate->disp();
+    print "\n";
+    print "\$ZZ = \n";
+    $ZZ->disp();
+    print "\n";
+    $diff = $estimate->plus($ZZ->times(-1));
+    print "\$diff = \n";
+    $diff->disp();
+};
+die if $@;
