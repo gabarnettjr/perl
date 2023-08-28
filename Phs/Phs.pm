@@ -23,7 +23,7 @@ sub new {
     my $values = shift;
     my $coeffs = undef;
     
-    my $self = [$dims, $rbfExponent, $polyDegree, $nodes, $values, $coeffs];
+    my $self = ["Phs", $dims, $rbfExponent, $polyDegree, $nodes, $values, $coeffs];
     bless $self;
     eval { $self->coeffs(); };  die if $@;
     return $self;
@@ -33,12 +33,17 @@ sub new {
 
 # GETTERS
 
+sub type {
+    my $self = shift;
+    return ${$self}[0];
+}
+
 sub dims {
     # Number of dimensions of the PHS (1, 2, 3, ...)
     my $self = shift;
     eval { Phs::checkNumInputs("Phs::dims", '0', scalar @_); };  die if $@;
     
-    my $dims = @{$self}[0];
+    my $dims = @{$self}[1];
     return $dims if defined $dims;
     return $self->nodes()->numRows();
     print STDERR "\nFailed to get dimensions.\n";  die;
@@ -51,7 +56,7 @@ sub rbfExponent {
     my $self = shift;
     eval { Phs::checkNumInputs("Phs::rbfExponent", '0', scalar @_); };  die if $@;
     
-    my $rbfExponent = @{$self}[1];
+    my $rbfExponent = @{$self}[2];
     return $rbfExponent if defined $rbfExponent;
     print STDERR "\nFailed to get RBF exponent.\n";  die;
 }
@@ -63,7 +68,7 @@ sub polyDegree {
     my $self = shift;
     eval { Phs::checkNumInputs("Phs::polyDegree", '0', scalar @_); };  die if $@;
     
-    my $polyDegree = @{$self}[2];
+    my $polyDegree = @{$self}[3];
     return $polyDegree if defined $polyDegree;
     print STDERR "\nFailed to get the max polynomial degree.\n";  die;
 }
@@ -75,7 +80,7 @@ sub nodes {
     my $self = shift;
     eval { Phs::checkNumInputs("Phs::nodes", '^0$|^1$', scalar @_); };  die if $@;
     
-    my $nodes = @{$self}[3];
+    my $nodes = @{$self}[4];
     return $nodes if defined $nodes && ! scalar @_;
     return @{$nodes}[shift] if defined $nodes;
     print STDERR "\nFailed to get the nodes.\n";  die;
@@ -88,7 +93,7 @@ sub values {
     my $self = shift;
     eval { Phs::checkNumInputs("Phs::values", '^0$|^1$', scalar @_); };  die if $@;
     
-    my $values = @{$self}[4];
+    my $values = @{$self}[5];
     return $values if defined $values && ! scalar @_;
     return @{$values}[shift] if defined $values;
     print STDERR "\nFailed to get the function values at the nodes.\n";  die;
@@ -101,7 +106,7 @@ sub coeffs {
     my $self = shift;
     eval { Phs::checkNumInputs("Phs::coeffs", '^0$|^1$', scalar @_); };  die if $@;
     
-    my $coeffs = @{$self}[5];
+    my $coeffs = @{$self}[6];
     return $coeffs if defined $coeffs && ! scalar @_;
     return @{$coeffs}[shift] if defined $coeffs;
     
