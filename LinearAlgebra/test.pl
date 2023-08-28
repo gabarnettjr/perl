@@ -113,8 +113,8 @@ $B->disp();
 
 print "\n";
 
-my $X = $A->solve($B);
-print "\$A->solve(\$B) = \n";
+my $X = $A->solve($I);
+print "\$A->solve(\$I) = \n";
 $X->disp();
 
 print "\n";
