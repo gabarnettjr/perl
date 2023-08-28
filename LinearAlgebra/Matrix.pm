@@ -56,7 +56,7 @@ sub zeros {
 
 sub ones {
     # New matrix of ones.
-    die if scalar @_ != 2;
+    die "Matrix::ones() requires two inputs, numRows and numCols.    " if scalar @_ != 2;
     my ($numRows, $numCols) = @_;
     
     my @items = ();
@@ -78,9 +78,10 @@ sub ones {
 
 sub eye {
     # New Identity matrix.
-    die if scalar @_ != 2;
-    my ($numRows, $numCols) = @_;
-    
+    die "Matrix::eye() requires one input, numRows (numCols always equals numRows).    " if scalar @_ != 1;
+    my ($numRows) = @_;
+
+    my $numCols = $numRows;
     my @items = ();
     
     for (my $i = 0; $i < $numRows; $i++) {
@@ -103,8 +104,8 @@ sub eye {
 
 
 sub linspace {
-    # New 1D matrix of equall-spaced values with known start and finish.
-    die if scalar @_ != 3;
+    # New 1D matrix of equally-spaced values with known start and finish.
+    die "Matrix::linspace() requires three inputs: start, finish, and number of points.    " if scalar @_ != 3;
     my ($a, $b, $numCols) = @_;
     
     my $dx = ($b - $a) / ($numCols - 1);
