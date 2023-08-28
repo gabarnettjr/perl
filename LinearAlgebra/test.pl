@@ -101,7 +101,7 @@ print "\n"; ####################################################################
 
 # Solve AX = B where X and B are matrices, not just column vectors.
 
-my $I = Matrix::eye(3, 3);
+my $I = Matrix::eye(3);
 print "\$I = \n";
 $I->disp();
 
