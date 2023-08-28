@@ -182,7 +182,9 @@ sub vstack {
     my $self = shift;
     my $other = shift;
     
-    my $out = Matrix::zeros($self->numRows() + $other->numRows(), $self->numCols());
+    die "Dimension mismatch.    " if $self->numCols() != $other->numCols();
+    
+    my $out = Matrix::zeros($self->numRows() + $other->numRows(), $other->numCols());
     
     for (my $i = 0; $i < $self->numRows(); $i++) {
         for (my $j = 0; $j < $self->numCols(); $j++) {
@@ -205,7 +207,11 @@ sub hstack {
     my $self = shift;
     my $other = shift;
     
-    my $out = $self->transpose()->vstack($other->transpose());
+    my $out;
+    eval {
+        $out = $self->transpose()->vstack($other->transpose());
+    };
+    die if $@;
     
     return $out->transpose();
 }
