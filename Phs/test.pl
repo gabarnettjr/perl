@@ -11,15 +11,21 @@ use Matrix;
 
 my $rbfExponent = 3;
 my $polyDegree = 1;
-my $n = 6;
+
+# Define spatial domain [a,b] x [c,d], with m rows and n columns.
+my $a = -1;  my $b = 1;  my $n = 4;
+my $c = -1;  my $d = 1;  my $m = 4;
+
+# Define number of rows (M) and columns (N) for evaluation points.
+my $M = 7;
 my $N = 7;
 
 ################################################################################
 
 my ($x, $y, $xx, $yy, $nodes, $zz);
 eval {
-    $x = Matrix::linspace(-1, 1, $n);
-    $y = Matrix::linspace(-1, 1, $n);
+    $x = Matrix::linspace($a, $b, $n);
+    $y = Matrix::linspace($c, $d, $m);
     ($xx, $yy) = Matrix::meshgrid($x, $y);
     $xx = $xx->flatten();  $yy = $yy->flatten();
     $nodes = $xx->vstack($yy);
@@ -29,8 +35,8 @@ die if $@;
 
 my ($X, $Y, $XX, $YY, $NODES, $ZZ);
 eval {
-    $X = Matrix::linspace(-1, 1, $N);
-    $Y = Matrix::linspace(-1, 1, $N);
+    $X = Matrix::linspace($a, $b, $N);
+    $Y = Matrix::linspace($c, $d, $M);
     ($XX, $YY) = Matrix::meshgrid($X, $Y);
     $XX = $XX->flatten();  $YY = $YY->flatten();
     $NODES = $XX->vstack($YY);
@@ -42,10 +48,9 @@ my ($phs, $estimate);
 eval {
     $phs = Phs::new($rbfExponent, $polyDegree, $nodes, $zz);
     $estimate = $phs->evaluate($NODES);
+    # $phs->coeffs()->disp();
 };
 die if $@;
-
-# $phs->coeffs()->disp();
 
 my $diff;
 eval {
