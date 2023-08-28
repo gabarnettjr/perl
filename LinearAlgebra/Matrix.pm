@@ -281,6 +281,15 @@ sub row {
 
 
 
+sub col {
+    my $self = shift;
+    my $j = shift;
+
+    return $self->transpose()->row($j);
+}
+
+
+
 sub set {
     my $self = shift;
     
