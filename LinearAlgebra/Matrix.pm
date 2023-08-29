@@ -495,6 +495,26 @@ sub pow {
     return $out;
 }
 
+
+
+sub norm {
+    my $self = shift;
+    die "Only 1D matrices are supported right now.    " if $self->numRows() > 1 && $self->numCols() > 1;
+    my $p = shift;
+
+    $p = 2 if ! $p;
+    
+    my $ell;
+    $ell = $self->numRows() if $self->numCols() == 1;
+    $ell = $self->numCols() if $self->numRows() == 1;
+
+    for (my $j = 0; $j < $ell; $j++) {
+        $norm += ($self->item($j) ** $p);
+    }
+
+    return $norm ** (1 / $p);
+}
+
 ################################################################################
 
 sub swapRows {
