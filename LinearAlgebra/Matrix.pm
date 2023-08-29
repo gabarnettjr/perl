@@ -517,6 +517,8 @@ sub norm {
     $ell = $self->numRows() if $self->numCols() == 1;
     $ell = $self->numCols() if $self->numRows() == 1;
 
+    my $norm = 0;
+
     for (my $j = 0; $j < $ell; $j++) {
         $norm += ($self->item($j) ** $p);
     }
