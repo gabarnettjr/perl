@@ -11,15 +11,16 @@ use Phs;
 ################################################################################
 
 sub new {
-    die "Requires four inputs.    " if scalar @_ != 4;
+    die "Requires five inputs.    " if scalar @_ != 5;
     my $dims = undef;
     my $rbfExponent = shift;
     my $polyDegree = shift;
     my $nodes = shift;
     my $vals = shift;
     my $splines = undef;
+    my $stencilRadius = shift;
     
-    my $self = ["LocalPhs", $dims, $rbfExponent, $polyDegree, $nodes, $vals, $splines];
+    my $self = ["LocalPhs", $dims, $rbfExponent, $polyDegree, $nodes, $vals, $splines, $stencilRadius];
     bless $self;
     return $self;
 }
@@ -80,11 +81,13 @@ sub splines {
 
     my @splines = ();
 
-    for (my $j = 0; $j < $self->nodes()->numCols(); $j++) {
+    for (my $j = 0; $j < $self->nodes->numCols; $j++) {
         my $stencil = Matrix::zeros($self->dims, 0);
-        for (my $k = 0; $k < $self->nodes()->numCols(); $k++) {
+        my $vals = Matrix::zeros(1, 0);
+        for (my $k = 0; $k < $self->nodes->numCols; $k++) {
             if (($self->nodes->col($j)->minus($self->nodes->col($k)))->norm < $self->stencilRadius) {
                 $stencil = $stencil->hstack($self->nodes->col($k));
+                $vals = $vals->hstack($self->vals($k));
             }
         }
         my $phs = Phs::new($self->rbfExponent, $self->polyDegree, $stencil, $vals);
