@@ -12,16 +12,15 @@ use Subdomain;
 ################################################################################
 
 sub new {
-    die "Requires one input (the nodes).    " if scalar @_ != 1;
+    die "Requires four inputs.    " if scalar @_ != 4;
     my $dims = undef;
     my $rbfExponent = shift;
     my $polyDegree = shift;
     my $nodes = shift;
     my $values = shift;
     my $splines = undef;
-    my $subdomains = undef;
     
-    my $self = ["LocalPhs", $nodes, $splines, $subdomains];
+    my $self = ["LocalPhs", $dims, $rbfExponent, $polyDegree, $nodes, $values, $splines];
     bless $self;
     return $self;
 }
@@ -31,6 +30,12 @@ sub new {
 sub type {
     my $self = shift;
     return @{$self}[0];
+}
+
+################################################################################
+
+sub dims {
+
 }
 
 ################################################################################
@@ -45,17 +50,7 @@ sub splines {
 
 ################################################################################
 
-sub subdomains {
-    my $self = shift;
-    my $subdomains = @{$self}[2];
-    return $subdomains if defined $subdomains;
-    
-    
-}
-
-################################################################################
-
-sub eval {
+sub evaluate {
     my $self = shift;
     my $evalPts = shift;
     
@@ -63,8 +58,8 @@ sub eval {
     
     foreach my $point ($evalPts) {
         foreach my $phs ($self->splines()) {
-            if ($phs->subdomain()->contains($point)) {
-                push(@{$values}, $phs->eval($point));
+            if ($phs->smallBox()->contains($point)) {
+                push(@{$values}, $phs->evaluate($point));
             }
         }
     }
