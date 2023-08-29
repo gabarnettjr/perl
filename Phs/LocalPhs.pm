@@ -78,15 +78,20 @@ sub splines {
     my $splines = @{$self}[6];
     return $splines if defined $splines;
 
-    # Get the lower and upper bounds of the nodes in each dimension, to define the spatial domain.
-    my $lowerBounds = Matrix::zeros($self->dims(), 1);
-    my $upperBounds = Matrix::zeros($self->dims(), 1);
-    for (my $i = 0; $i < $self->dims(); $i++) {
-        $lowerBounds->set($i, $nodes->row($i)->min());
-        $upperBounds->set($i, $nodes->row($i)->max());
+    my @splines = ();
+
+    for (my $j = 0; $j < $self->nodes()->numCols(); $j++) {
+        my $stencil = Matrix::zeros($self->dims, 0);
+        for (my $k = 0; $k < $self->nodes()->numCols(); $k++) {
+            if (($self->nodes->col($j)->minus($self->nodes->col($k)))->norm < $self->stencilRadius) {
+                $stencil = $stencil->hstack($self->nodes->col($k));
+            }
+        }
+        my $phs = Phs::new($self->rbfExponent, $self->polyDegree, $stencil, $vals);
+        push(@splines, $phs);
     }
 
-    
+    return \@splines;
 }
 
 ################################################################################
