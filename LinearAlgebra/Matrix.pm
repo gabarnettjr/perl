@@ -362,7 +362,16 @@ sub plus {
 
 
 
-sub dot {
+sub minus {
+    my $self = shift;
+    my $other = shift;
+
+    return $self->plus($other->dot(-1));
+}
+
+
+
+sub dotProduct {
     # Return the dot product of two 1D matrices of the same size.
     my $self = shift;
     my $other = shift;
@@ -374,7 +383,7 @@ sub dot {
     my $numRows = $self->numRows();
     my $numCols = $self->numCols();
 
-    my $dot = 0;
+    my $dotProduct = 0;
     
     if ($numRows != $other->numRows() || $numCols != $other->numCols()) {
         print STDERR "\nMatrices must be the same size to dot them.\n";  die;
@@ -382,15 +391,15 @@ sub dot {
         print STDERR "\nThis function is only implemented for 1D matrices.\n";  die;
     } elsif ($numRows == 1) {
         for (my $j = 0; $j < $numCols; $j++) {
-            $dot += $self->item(0, $j) * $other->item(0, $j);
+            $dotProduct += $self->item(0, $j) * $other->item(0, $j);
         }
     } elsif ($numCols == 1) {
         for (my $i = 0; $i < $numRows; $i++) {
-            $dot += $self->item($i, 0) * $other->item($i, 0);
+            $dotProduct += $self->item($i, 0) * $other->item($i, 0);
         }
     }
     
-    return $dot;
+    return $dotProduct;
 }
 
 
@@ -411,7 +420,7 @@ sub transpose {
 
 
 
-sub times {
+sub dot {
     # Multiply a matrix by a scalar, or by another matrix.
     my $self = shift;
     my $other = shift;
@@ -435,7 +444,7 @@ sub times {
         
         for (my $i = 0; $i < $prod->numRows(); $i++) {
             for (my $j = 0; $j < $prod->numCols(); $j++) {
-                $prod->set($i, $j, $self->row($i)->dot($other->row($j)));
+                $prod->set($i, $j, $self->row($i)->dotProduct($other->row($j)));
             }
         }
         
@@ -462,7 +471,7 @@ sub dotTimes {
     my $numCols = $self->numCols();
     
     if (! ref $other) {
-        print STDERR "\nUse times() to multiply a scalar by a matrix.\n";  die;
+        print STDERR "\nUse dot() to multiply a scalar by a matrix.\n";  die;
     } elsif ($numRows != $other->numRows() || $numCols != $other->numCols()) {
         print STDERR "\nMatrices must be the same size to (dot) multiply them together.\n";  die;
     }
