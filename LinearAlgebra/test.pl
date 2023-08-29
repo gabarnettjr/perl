@@ -29,8 +29,8 @@ $B->disp();
 
 print "\n";
 
-my $C = $A->times($B);
-print "\$A->times(\$B) = \n";
+my $C = $A->dot($B);
+print "\$A->dot(\$B) = \n";
 $C->disp();
 
 print "\n"; ####################################################################
@@ -93,8 +93,8 @@ $x->disp();
 
 print "\n";
 
-my $prod = $A->times($x);
-print "\$A->times(\$x) = \n";
+my $prod = $A->dot($x);
+print "\$A->dot(\$x) = \n";
 $prod->disp();
 
 print "\n"; ####################################################################
@@ -119,6 +119,6 @@ $X->disp();
 
 print "\n";
 
-$prod = $A->times($X);
-print "\$A->times(\$X) = \n";
+$prod = $A->dot($X);
+print "\$A->dot(\$X) = \n";
 $prod->disp();
