@@ -20,10 +20,10 @@ sub new {
     my $rbfExponent = shift;
     my $polyDegree = shift;
     my $nodes = shift;
-    my $values = shift;
+    my $vals = shift;
     my $coeffs = undef;
     
-    my $self = ["Phs", $dims, $rbfExponent, $polyDegree, $nodes, $values, $coeffs];
+    my $self = ["Phs", $dims, $rbfExponent, $polyDegree, $nodes, $vals, $coeffs];
     bless $self;
     eval { $self->coeffs(); };  die if $@;
     return $self;
@@ -88,21 +88,21 @@ sub nodes {
 
 
 
-sub values {
-    # Known function values that the PHS must match at the nodes
+sub vals {
+    # Known function vals that the PHS must match at the nodes
     my $self = shift;
-    eval { Phs::checkNumInputs("Phs::values", '^0$|^1$', scalar @_); };  die if $@;
+    eval { Phs::checkNumInputs("Phs::vals", '^0$|^1$', scalar @_); };  die if $@;
     
-    my $values = @{$self}[5];
-    return $values if defined $values && ! scalar @_;
-    return @{$values}[shift] if defined $values;
-    print STDERR "\nFailed to get the function values at the nodes.\n";  die;
+    my $vals = @{$self}[5];
+    return $vals if defined $vals && ! scalar @_;
+    return @{$vals}[shift] if defined $vals;
+    print STDERR "\nFailed to get the function vals at the nodes.\n";  die;
 }
 
 
 
 sub coeffs {
-    # Use the nodes and function values to determine the PHS coefficients.
+    # Use the nodes and function vals to determine the PHS coefficients.
     my $self = shift;
     eval { Phs::checkNumInputs("Phs::coeffs", '^0$|^1$', scalar @_); };  die if $@;
     
@@ -123,7 +123,7 @@ sub coeffs {
     
     # Solve a linear system to get the coefficients.
     $null = Matrix::zeros($p->numRows(), 1);
-    return $A->solve($self->values()->transpose()->vstack($null));
+    return $A->solve($self->vals()->transpose()->vstack($null));
 }
 
 ################################################################################
