@@ -18,6 +18,9 @@ my $c = -1;  my $d = 1;  my $m = 4;
 my $M = 7;
 my $N = 7;
 
+# Define the size of the stencil.
+my $stencilRadius = .25;
+
 ################################################################################
 
 my ($x, $y, $xx, $yy, $nodes, $zz);
@@ -44,7 +47,7 @@ die if $@;
 
 my ($phs, $estimate);
 eval {
-    $phs = Phs::new($rbfExponent, $polyDegree, $nodes, $zz);
+    $phs = LocalPhs::new($rbfExponent, $polyDegree, $nodes, $zz, $stencilRadius);
     $estimate = $phs->evaluate($NODES);
     # $phs->coeffs()->disp();
 };
