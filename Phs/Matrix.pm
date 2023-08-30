@@ -286,7 +286,7 @@ sub col {
     my $self = shift;
     my $j = shift;
 
-    return $self->transpose->row($j);
+    return $self->transpose->row($j)->transpose;
 }
 
 
