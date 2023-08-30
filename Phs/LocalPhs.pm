@@ -62,14 +62,18 @@ sub polyDegree {
 
 sub nodes {
     my $self = shift;
-    return @{$self}[4];
+    my $nodes = @{$self}[4];
+    return $nodes if defined $nodes && ! scalar @_;
+    return @{$nodes}[shift] if defined $nodes;
 }
 
 ################################################################################
 
 sub vals {
     my $self = shift;
-    return @{$self}[5];
+    my $vals = @{$self}[5];
+    return $vals if defined $vals && ! scalar @_;
+    return @{$vals}[shift] if defined $vals;
 }
 
 ################################################################################
@@ -83,15 +87,16 @@ sub splines {
     my @splines = ();
 
     for (my $j = 0; $j < $self->nodes->numCols; $j++) {
-        # my $stencil = Matrix::zeros($self->dims, 0);
         my $stencil = $self->nodes->col($j);
-        my $vals = Matrix::zeros(1, 0);
+        my $vals = $self->vals->col($j);
         for (my $k = 0; $k < $self->nodes->numCols; $k++) {
             if ($k != $j && ($self->nodes->col($j)->minus($self->nodes->col($k)))->norm < $self->stencilRadius) {
                 $stencil = $stencil->hstack($self->nodes->col($k));
-                $vals = $vals->hstack($self->vals($k));
+                $vals = $vals->hstack($self->vals->col($k));
             }
         }
+        print "rows = " . $vals->numRows . "\n";
+        print "cols = " . $vals->numCols . "\n";
         my $phs = Phs::new($self->rbfExponent, $self->polyDegree, $stencil, $vals);
         push(@splines, $phs);
     }
@@ -128,7 +133,9 @@ sub evaluate {
                 $ind = $j;
             }
         }
-        $vals->set($i, $self->splines($ind)->evaluate($point->transpose));
+        # print "rows = " . $point->transpose->numRows . "\n";
+        # print "cols = " . $point->transpose->numCols . "\n";
+        $vals->set($i, $self->splines($ind)->evaluate($point));
     }
     
     return $vals;
