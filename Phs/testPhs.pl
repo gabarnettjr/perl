@@ -4,10 +4,8 @@ use strict;
 use warnings;
 
 use lib ".";
-use Phs;
-
-use lib "../LinearAlgebra";
 use Matrix;
+use Phs;
 
 my $rbfExponent = 3;
 my $polyDegree = 1;
