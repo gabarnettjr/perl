@@ -5,7 +5,7 @@ package Subdomain;
 use strict;
 use warnings;
 
-use lib "../LinearAlgebra";
+use lib ".";
 use Matrix;
 
 ################################################################################
