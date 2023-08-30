@@ -5,6 +5,7 @@ use warnings;
 
 use lib ".";
 use Matrix;
+use LocalPhs;
 use Phs;
 
 my $rbfExponent = 3;
