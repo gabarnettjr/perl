@@ -28,7 +28,6 @@ sub new {
     
     my $self = ["Phs", $dims, $rbfExponent, $polyDegree, $nodes, $vals, $coeffs];
     bless $self;
-    eval { $self->coeffs(); };  die if $@;
     return $self;
 }
 
@@ -110,23 +109,24 @@ sub coeffs {
     eval { Phs::checkNumInputs("Phs::coeffs", '^0$|^1$', scalar @_); };  die if $@;
     
     my $coeffs = @{$self}[6];
-    return $coeffs if defined $coeffs && ! scalar @_;
-    return @{$coeffs}[shift] if defined $coeffs;
+    return $coeffs if defined $coeffs;
     
     # Make the combined RBF plus polynomial A-matrix.
     my ($A, $p, $null);
     eval {
-        $A = $self->phi($self->r($self->nodes()));
-        $p = $self->poly($self->nodes());
-        $A = $A->hstack($p->transpose());
-        $null = Matrix::zeros($p->numRows(), $p->numRows());
+        $A = $self->phi($self->r($self->nodes));
+        $p = $self->poly($self->nodes);
+        $A = $A->hstack($p->transpose);
+        $null = Matrix::zeros($p->numRows, $p->numRows);
         $A = $A->vstack($p->hstack($null));
     };
     die if $@;
     
     # Solve a linear system to get the coefficients.
-    $null = Matrix::zeros($p->numRows(), 1);
-    return $A->solve($self->vals()->transpose()->vstack($null));
+    $null = Matrix::zeros($p->numRows, 1);
+    $coeffs = $A->solve($self->vals->transpose->vstack($null));
+    @{$self}[6] = $coeffs;
+    return $coeffs if ! scalar @_;
 }
 
 ################################################################################
@@ -169,11 +169,11 @@ sub evaluate {
     
     my $out;
     eval {
-        $out = $self->phi($self->r($evalPts))->hstack($self->poly($evalPts)->transpose())->dot($self->coeffs());
+        $out = $self->phi($self->r($evalPts))->hstack($self->poly($evalPts)->transpose)->dot($self->coeffs);
     };
     die if $@;
     
-    return $out->transpose();
+    return $out->transpose;
 }
 
 
@@ -187,13 +187,13 @@ sub r {
     my $r;
     
     eval {
-        $r = Matrix::zeros($evalPts->numCols(), $self->nodes()->numCols());
+        $r = Matrix::zeros($evalPts->numCols, $self->nodes->numCols);
         
-        for (my $i = 0; $i < $evalPts->numCols(); $i++) {
-            for (my $j = 0; $j < $self->nodes()->numCols(); $j++) {
+        for (my $i = 0; $i < $evalPts->numCols; $i++) {
+            for (my $j = 0; $j < $self->nodes->numCols; $j++) {
                 my $tmp = 0;
-                for (my $k = 0; $k < $self->dims(); $k++) {
-                    $tmp += ($evalPts->item($k, $i) - $self->nodes()->item($k, $j)) ** 2;
+                for (my $k = 0; $k < $self->dims; $k++) {
+                    $tmp += ($evalPts->item($k, $i) - $self->nodes->item($k, $j)) ** 2;
                 }
                 $r->set($i, $j, sqrt $tmp);
             }
