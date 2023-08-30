@@ -9,6 +9,9 @@ package Phs;
 use strict;
 use warnings;
 
+use lib ".";
+use Matrix;
+
 ################################################################################
 
 # CONSTRUCTOR
