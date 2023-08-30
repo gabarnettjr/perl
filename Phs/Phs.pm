@@ -169,6 +169,9 @@ sub evaluate {
     
     my $out;
     eval {
+        # my $tmp = $self->coeffs;
+        # print "rows = " . $tmp->numRows . "\n";
+        # print "cols = " . $tmp->numCols . "\n";
         $out = $self->phi($self->r($evalPts))->hstack($self->poly($evalPts)->transpose)->dot($self->coeffs);
     };
     die if $@;
