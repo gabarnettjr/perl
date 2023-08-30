@@ -286,7 +286,7 @@ sub col {
     my $self = shift;
     my $j = shift;
 
-    return $self->transpose()->row($j);
+    return $self->transpose->row($j);
 }
 
 
@@ -548,6 +548,8 @@ sub solve {
     my $b = $rhs->copy();
 
     if ($A->numRows() != $A->numCols() || $A->numRows() != $b->numRows()) {
+        print "Rows(A) = " . $A->numRows . "\n";
+        print "Rows(b) = " . $b->numRows . "\n";
         print STDERR "\nA should be square.  Rows(A) should equal Rows(b).\n";  die;
     }
     
