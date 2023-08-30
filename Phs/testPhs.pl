@@ -60,7 +60,7 @@ eval {
     print "\$ZZ = \n";
     $ZZ->disp();
     print "\n";
-    $diff = $estimate->plus($ZZ->times(-1));
+    $diff = $estimate->plus($ZZ->dot(-1));
     print "\$diff = \n";
     $diff->disp();
 };
