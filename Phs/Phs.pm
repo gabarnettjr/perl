@@ -150,7 +150,7 @@ sub poly {
         # for (my $k1 = 0; $k1 < $self->dims(); $k1++) {
             # for (my $k2 = 0; $k2 < $self->dims(); $k2++) {
                 # if ($k1 + $k2 == 2) {
-                    # $poly = $poly->vstack($evalPts->row($k1)->pow($k1)->times($evalPts->row($k2)->pow($k2))) 
+                    # $poly = $poly->vstack($evalPts->row($k1)->pow($k1)->dot($evalPts->row($k2)->pow($k2))) 
                 # }
             # }
         # }
@@ -169,7 +169,7 @@ sub evaluate {
     
     my $out;
     eval {
-        $out = $self->phi($self->r($evalPts))->hstack($self->poly($evalPts)->transpose())->times($self->coeffs());
+        $out = $self->phi($self->r($evalPts))->hstack($self->poly($evalPts)->transpose())->dot($self->coeffs());
     };
     die if $@;
     
