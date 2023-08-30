@@ -20,7 +20,7 @@ my $M = 7;
 my $N = 7;
 
 # Define the size of the stencil.
-my $stencilRadius = .25;
+my $stencilRadius = 1;
 
 ################################################################################
 
