@@ -83,10 +83,11 @@ sub splines {
     my @splines = ();
 
     for (my $j = 0; $j < $self->nodes->numCols; $j++) {
-        my $stencil = Matrix::zeros($self->dims, 0);
+        # my $stencil = Matrix::zeros($self->dims, 0);
+        my $stencil = $self->nodes->col($j);
         my $vals = Matrix::zeros(1, 0);
         for (my $k = 0; $k < $self->nodes->numCols; $k++) {
-            if (($self->nodes->col($j)->minus($self->nodes->col($k)))->norm < $self->stencilRadius) {
+            if ($k != $j && ($self->nodes->col($j)->minus($self->nodes->col($k)))->norm < $self->stencilRadius) {
                 $stencil = $stencil->hstack($self->nodes->col($k));
                 $vals = $vals->hstack($self->vals($k));
             }
@@ -94,8 +95,10 @@ sub splines {
         my $phs = Phs::new($self->rbfExponent, $self->polyDegree, $stencil, $vals);
         push(@splines, $phs);
     }
+    
     @{$self}[6] = \@splines;
-    return \@splines;
+    return \@splines if ! scalar @_;
+    return $splines[shift];
 }
 
 ################################################################################
@@ -111,14 +114,21 @@ sub evaluate {
     my $self = shift;
     my $evalPts = shift;
     
-    my $vals = [];
+    my $vals = Matrix::zeros(1, $evalPts->numCols);
+    my ($min, $ind, $i, $j, $point, $node, $dist);
     
-    foreach my $point ($evalPts) {
-        foreach my $phs ($self->splines()) {
-            if ($phs->smallBox()->contains($point)) {
-                push(@{$vals}, $phs->evaluate($point));
+    for ($i = 0; $i < $evalPts->numCols; $i++) {
+        $point = $evalPts->col($i);
+        $min = 99;
+        for ($j = 0; $j < $self->nodes->numCols; $j++) {
+            $node = $self->nodes->col($j);
+            $dist = $point->minus($node)->norm;
+            if ($dist < $min) {
+                $min = $dist;
+                $ind = $j;
             }
         }
+        $vals->set($i, $self->splines($ind)->evaluate($point->transpose));
     }
     
     return $vals;
