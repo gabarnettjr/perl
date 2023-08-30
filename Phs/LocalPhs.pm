@@ -77,7 +77,8 @@ sub vals {
 sub splines {
     my $self = shift;
     my $splines = @{$self}[6];
-    return $splines if defined $splines;
+    return $splines if defined $splines && ! scalar @_;
+    return @{$splines}[shift] if defined $splines;
 
     my @splines = ();
 
@@ -93,7 +94,7 @@ sub splines {
         my $phs = Phs::new($self->rbfExponent, $self->polyDegree, $stencil, $vals);
         push(@splines, $phs);
     }
-
+    @{$self}[6] = \@splines;
     return \@splines;
 }
 
