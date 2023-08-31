@@ -25,7 +25,7 @@ sub new {
         die "Bad input for new matrix.  Give ref to array.";
     }
     
-    my $self = [$items, $numRows, $numCols];
+    my $self = ["Matrix", $items, $numRows, $numCols];
     bless $self;
     return $self;
 }
@@ -47,7 +47,7 @@ sub zeros {
         push(@items, \@tmp);
     }
     
-    my $self = [\@items, $numRows, $numCols];
+    my $self = ["Matrix", \@items, $numRows, $numCols];
     bless $self;
     return $self;
 }
@@ -69,7 +69,7 @@ sub ones {
         push(@items, \@tmp);
     }
     
-    my $self = [\@items, $numRows, $numCols];
+    my $self = ["Matrix", \@items, $numRows, $numCols];
     bless $self;
     return $self;
 }
@@ -96,7 +96,7 @@ sub eye {
         push(@items, \@tmp);
     }
     
-    my $self = [\@items, $numRows, $numCols];
+    my $self = ["Matrix", \@items, $numRows, $numCols];
     bless $self;
     return $self;
 }
@@ -118,7 +118,7 @@ sub linspace {
     my $numRows = 1;
     my $items = [\@items];
     
-    my $self = [$items, $numRows, $numCols];
+    my $self = ["Matrix", $items, $numRows, $numCols];
     bless $self;
     return $self;
 }
@@ -127,11 +127,18 @@ sub linspace {
 
 # GETTERS
 
+sub type {
+    my $self = shift;
+    return @{$self}[0];
+}
+
+
+
 sub items {
     die if scalar @_ != 1;
     my $self = shift;
     
-    my $items = @{$self}[0];
+    my $items = @{$self}[1];
     return $items if defined $items && ! scalar @_;
     print STDERR "\nFailed to get the items in the matrix.\n";  die;
 }
@@ -142,7 +149,7 @@ sub numRows {
     die if scalar @_ != 1;
     my $self = shift;
     
-    my $numRows = @{$self}[1];
+    my $numRows = @{$self}[2];
     return $numRows if defined $numRows;
     print STDERR "\nFailed to get the number of rows.\n";  die;
 }
@@ -153,7 +160,7 @@ sub numCols {
     die if scalar @_ != 1;
     my $self = shift;
     
-    my $numCols = @{$self}[2];
+    my $numCols = @{$self}[3];
     return $numCols if defined $numCols;
     print STDERR "\nFailed to get the number of columns.\n";  die;
 }
