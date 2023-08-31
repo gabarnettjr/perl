@@ -47,7 +47,7 @@ sub dims {
     
     my $dims = @{$self}[1];
     return $dims if defined $dims;
-    return $self->nodes()->numRows();
+    return $self->nodes->numRows;
     print STDERR "\nFailed to get dimensions.\n";  die;
 }
 
@@ -84,7 +84,7 @@ sub nodes {
     
     my $nodes = @{$self}[4];
     return $nodes if defined $nodes && ! scalar @_;
-    return @{$nodes}[shift] if defined $nodes;
+    return $nodes->col(shift) if defined $nodes;
     print STDERR "\nFailed to get the nodes.\n";  die;
 }
 
@@ -97,7 +97,7 @@ sub vals {
     
     my $vals = @{$self}[5];
     return $vals if defined $vals && ! scalar @_;
-    return @{$vals}[shift] if defined $vals;
+    return $vals->col(shift) if defined $vals;
     print STDERR "\nFailed to get the function vals at the nodes.\n";  die;
 }
 
@@ -137,10 +137,10 @@ sub poly {
     eval { Phs::checkNumInputs("Phs::poly", '1', scalar @_); };  die if $@;
     my $evalPts = shift;
     
-    my $poly = Matrix::ones(1, $evalPts->numCols());
+    my $poly = Matrix::ones(1, $evalPts->numCols);
     
     if ($self->polyDegree() >= 1) {
-        for (my $k = 0; $k < $self->dims(); $k++) {
+        for (my $k = 0; $k < $self->dims; $k++) {
             $poly = $poly->vstack($evalPts->row($k));
         }
     }
@@ -169,9 +169,6 @@ sub evaluate {
     
     my $out;
     eval {
-        # my $tmp = $self->coeffs;
-        # print "rows = " . $tmp->numRows . "\n";
-        # print "cols = " . $tmp->numCols . "\n";
         $out = $self->phi($self->r($evalPts))->hstack($self->poly($evalPts)->transpose)->dot($self->coeffs);
     };
     die if $@;
@@ -217,9 +214,9 @@ sub phi {
     
     my $phi = $r->copy();
     
-    for (my $i = 0; $i < $phi->numRows(); $i++) {
-        for (my $j = 0; $j < $phi->numCols(); $j++) {
-            $phi->set($i, $j, $r->item($i, $j) ** $self->rbfExponent());
+    for (my $i = 0; $i < $phi->numRows; $i++) {
+        for (my $j = 0; $j < $phi->numCols; $j++) {
+            $phi->set($i, $j, $r->item($i, $j) ** $self->rbfExponent);
         }
     }
     
@@ -231,9 +228,9 @@ sub phi {
 sub testFunc2d {
     my $evalPts = shift;
     
-    my $out = Matrix::zeros(1, $evalPts->numCols());
+    my $out = Matrix::zeros(1, $evalPts->numCols);
     
-    for (my $j = 0; $j < $out->numCols(); $j++) {
+    for (my $j = 0; $j < $out->numCols; $j++) {
         $out->set($j, $evalPts->item(0, $j) ** 2 + $evalPts->item(1, $j));
         # $out->set($j, 1);
     }
