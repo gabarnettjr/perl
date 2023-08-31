@@ -65,6 +65,7 @@ sub nodes {
     my $nodes = @{$self}[4];
     return $nodes if defined $nodes && ! scalar @_;
     return @{$nodes}[shift] if defined $nodes;
+    die "Failed to get nodes.";
 }
 
 ################################################################################
@@ -74,6 +75,7 @@ sub vals {
     my $vals = @{$self}[5];
     return $vals if defined $vals && ! scalar @_;
     return @{$vals}[shift] if defined $vals;
+    die "Failed to get function values.";
 }
 
 ################################################################################
@@ -95,8 +97,7 @@ sub splines {
                 $vals = $vals->hstack($self->vals->col($k));
             }
         }
-        print "rows = " . $vals->numRows . "\n";
-        print "cols = " . $vals->numCols . "\n";
+        # print "dims = \(" . $vals->numRows . ", " . $vals->numCols . "\)\n";
         my $phs = Phs::new($self->rbfExponent, $self->polyDegree, $stencil, $vals);
         push(@splines, $phs);
     }
