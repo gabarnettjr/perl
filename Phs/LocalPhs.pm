@@ -41,7 +41,7 @@ sub dims {
     
     my $dims = @{$self}[1];
     return $dims if defined $dims;
-    return $self->nodes()->numRows();
+    return $self->nodes->numRows;
 }
 
 ################################################################################
@@ -64,7 +64,7 @@ sub nodes {
     my $self = shift;
     my $nodes = @{$self}[4];
     return $nodes if defined $nodes && ! scalar @_;
-    return @{$nodes}[shift] if defined $nodes;
+    return $nodes->col(shift) if defined $nodes;
     die "Failed to get nodes.";
 }
 
@@ -74,7 +74,7 @@ sub vals {
     my $self = shift;
     my $vals = @{$self}[5];
     return $vals if defined $vals && ! scalar @_;
-    return @{$vals}[shift] if defined $vals;
+    return $vals->col(shift) if defined $vals;
     die "Failed to get function values.";
 }
 
