@@ -139,16 +139,16 @@ sub poly {
     
     my $poly = Matrix::ones(1, $evalPts->numCols);
     
-    if ($self->polyDegree() >= 1) {
+    if ($self->polyDegree >= 1) {
         for (my $k = 0; $k < $self->dims; $k++) {
             $poly = $poly->vstack($evalPts->row($k));
         }
     }
     
-    # if ($self->polyDegree() >= 2) {
+    # if ($self->polyDegree >= 2) {
         # my $tmp = 2;
-        # for (my $k1 = 0; $k1 < $self->dims(); $k1++) {
-            # for (my $k2 = 0; $k2 < $self->dims(); $k2++) {
+        # for (my $k1 = 0; $k1 < $self->dims; $k1++) {
+            # for (my $k2 = 0; $k2 < $self->dims; $k2++) {
                 # if ($k1 + $k2 == 2) {
                     # $poly = $poly->vstack($evalPts->row($k1)->pow($k1)->dot($evalPts->row($k2)->pow($k2))) 
                 # }
@@ -212,7 +212,7 @@ sub phi {
     eval { Phs::checkNumInputs("Phs::phi", '1', scalar @_); };  die if $@;
     my $r = shift;
     
-    my $phi = $r->copy();
+    my $phi = $r->copy;
     
     for (my $i = 0; $i < $phi->numRows; $i++) {
         for (my $j = 0; $j < $phi->numCols; $j++) {
