@@ -41,7 +41,7 @@ sub dims {
     
     my $dims = @{$self}[1];
     return $dims if defined $dims;
-    return $self->nodes->numRows;
+    return $self->nodes->numCols;
 }
 
 ################################################################################
@@ -64,7 +64,7 @@ sub nodes {
     my $self = shift;
     my $nodes = @{$self}[4];
     return $nodes if defined $nodes && ! scalar @_;
-    return $nodes->col(shift) if defined $nodes;
+    return $nodes->row(shift) if defined $nodes;
     die "Failed to get nodes.";
 }
 
@@ -74,7 +74,7 @@ sub vals {
     my $self = shift;
     my $vals = @{$self}[5];
     return $vals if defined $vals && ! scalar @_;
-    return $vals->col(shift) if defined $vals;
+    return $vals->row(shift) if defined $vals;
     die "Failed to get function values.";
 }
 
@@ -88,16 +88,15 @@ sub splines {
 
     my @splines = ();
 
-    for (my $j = 0; $j < $self->nodes->numCols; $j++) {
-        my $stencil = $self->nodes->col($j);
-        my $vals = $self->vals->col($j);
-        for (my $k = 0; $k < $self->nodes->numCols; $k++) {
-            if ($k != $j && ($self->nodes->col($j)->minus($self->nodes->col($k)))->norm < $self->stencilRadius) {
-                $stencil = $stencil->hstack($self->nodes->col($k));
-                $vals = $vals->hstack($self->vals->col($k));
+    for (my $j = 0; $j < $self->nodes->numRows; $j++) {
+        my $stencil = $self->nodes->row($j);
+        my $vals = $self->vals->row($j);
+        for (my $k = 0; $k < $self->nodes->numRows; $k++) {
+            if ($k != $j && ($self->nodes->row($j)->minus($self->nodes->row($k)))->norm < $self->stencilRadius) {
+                $stencil = $stencil->vstack($self->nodes->row($k));
+                $vals = $vals->vstack($self->vals->row($k));
             }
         }
-        # print "dims = \(" . $vals->numRows . ", " . $vals->numCols . "\)\n";
         my $phs = Phs::new($self->rbfExponent, $self->polyDegree, $stencil, $vals);
         push(@splines, $phs);
     }
@@ -122,23 +121,19 @@ sub evaluate {
     
     my ($min, $ind, $i, $j, $point, $node, $dist, $out);
     
-    $out = Matrix::zeros(1, $evalPts->numCols);
+    $out = Matrix::zeros($evalPts->numRows, 1);
     
-    for ($i = 0; $i < $evalPts->numCols; $i++) {
-        $point = $evalPts->col($i);
+    for ($i = 0; $i < $evalPts->numRows; $i++) {
+        $point = $evalPts->row($i);
         $min = 99;
-        for ($j = 0; $j < $self->nodes->numCols; $j++) {
-            $node = $self->nodes->col($j);
+        for ($j = 0; $j < $self->nodes->numRows; $j++) {
+            $node = $self->nodes->row($j);
             $dist = ($point->minus($node))->norm;
             if ($dist < $min) {
                 $min = $dist;
                 $ind = $j;
             }
         }
-        # print "\$min = " . $point->minus($self->nodes->col($ind))->norm . "\n";
-        # print "\$min = $min\n\n";
-        # my $tmp = $self->splines($ind)->evaluate($point);
-        # print "dims = " . $tmp->numRows . " x " . $tmp->numCols . "\n";
         $out->set($i, $self->splines($ind)->evaluate($point)->item(0));
     }
     
