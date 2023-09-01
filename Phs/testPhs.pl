@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use lib ".";
-use Matrix;
 use Phs;
 
 my $rbfExponent = 3;
@@ -25,8 +24,8 @@ eval {
     $x = Matrix::linspace($a, $b, $n);
     $y = Matrix::linspace($c, $d, $m);
     ($xx, $yy) = Matrix::meshgrid($x, $y);
-    $xx = $xx->flatten();  $yy = $yy->flatten();
-    $nodes = $xx->vstack($yy);
+    $xx = $xx->flatten;  $yy = $yy->flatten;
+    $nodes = $xx->vstack($yy)->transpose;
     $zz = Phs::testFunc2d($nodes);
 };
 die if $@;
@@ -36,8 +35,8 @@ eval {
     $X = Matrix::linspace($a, $b, $N);
     $Y = Matrix::linspace($c, $d, $M);
     ($XX, $YY) = Matrix::meshgrid($X, $Y);
-    $XX = $XX->flatten();  $YY = $YY->flatten();
-    $NODES = $XX->vstack($YY);
+    $XX = $XX->flatten;  $YY = $YY->flatten;
+    $NODES = $XX->vstack($YY)->transpose;
     $ZZ = Phs::testFunc2d($NODES);
 };
 die if $@;
@@ -45,21 +44,20 @@ die if $@;
 my ($phs, $estimate);
 eval {
     $phs = Phs::new($rbfExponent, $polyDegree, $nodes, $zz);
-    $estimate = $phs->evaluate($NODES)->transpose;
-    # $phs->coeffs()->disp();
+    $estimate = $phs->evaluate($NODES);
 };
 die if $@;
 
 my $diff;
 eval {
     print "\$estimate = \n";
-    $estimate->disp();
+    $estimate->transpose->disp;
     print "\n";
     print "\$ZZ = \n";
-    $ZZ->disp();
+    $ZZ->transpose->disp;
     print "\n";
     $diff = $estimate->plus($ZZ->dot(-1));
     print "\$diff = \n";
-    $diff->disp();
+    $diff->transpose->disp;
 };
 die if $@;
