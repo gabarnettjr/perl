@@ -12,15 +12,15 @@ my $rbfExponent = 3;
 my $polyDegree = 1;
 
 # Define spatial domain [a,b] x [c,d], with m rows and n columns.
-my $a = -1;  my $b = 1;  my $n = 5;
-my $c = -1;  my $d = 1;  my $m = 5;
+my $a = -1;  my $b = 1;  my $n = 4;
+my $c = -1;  my $d = 1;  my $m = 4;
 
 # Define number of rows (M) and columns (N) for evaluation points.
-my $M = 8;
-my $N = 8;
+my $M = 3;
+my $N = 3;
 
 # Define the size of the stencil.
-my $stencilRadius = 1;
+my $stencilRadius = 5;
 
 ################################################################################
 
@@ -49,6 +49,15 @@ die if $@;
 my ($phs, $estimate);
 eval {
     $phs = LocalPhs::new($rbfExponent, $polyDegree, $nodes, $zz, $stencilRadius);
+    # print "coeffs = \n";
+    # for (my $i = 0; $i < scalar @{$phs->splines}; $i++) { 
+        # for (my $j = 0; $j < $NODES->numCols; $j++) {
+            # my $tmp = $phs->evaluate($NODES->col($j));
+            # print "\$tmp = \n";
+            # $tmp->disp;
+        # }
+    # }
+    # die "debug";
     $estimate = $phs->evaluate($NODES);
     # $phs->coeffs()->disp();
 };
@@ -57,13 +66,13 @@ die if $@;
 my $diff;
 eval {
     print "\$estimate = \n";
-    $estimate->disp();
+    $estimate->disp;
     print "\n";
     print "\$ZZ = \n";
-    $ZZ->disp();
+    $ZZ->disp;
     print "\n";
     $diff = $estimate->plus($ZZ->dot(-1));
     print "\$diff = \n";
-    $diff->disp();
+    $diff->disp;
 };
 die if $@;
