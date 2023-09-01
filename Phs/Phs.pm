@@ -47,8 +47,11 @@ sub dims {
     
     my $dims = @{$self}[1];
     return $dims if defined $dims;
-    return $self->nodes->numRows;
-    print STDERR "\nFailed to get dimensions.\n";  die;
+    
+    $dims = $self->nodes->numRows;
+    @{$self}[1] = $dims;
+    return $dims if ! scalar @_;
+    die "Failed to get dimensions.\n";
 }
 
 
@@ -60,7 +63,7 @@ sub rbfExponent {
     
     my $rbfExponent = @{$self}[2];
     return $rbfExponent if defined $rbfExponent;
-    print STDERR "\nFailed to get RBF exponent.\n";  die;
+    die "Failed to get RBF exponent.";
 }
 
 
@@ -72,7 +75,7 @@ sub polyDegree {
     
     my $polyDegree = @{$self}[3];
     return $polyDegree if defined $polyDegree;
-    print STDERR "\nFailed to get the max polynomial degree.\n";  die;
+    die "Failed to get the max polynomial degree.";
 }
 
 
@@ -85,7 +88,7 @@ sub nodes {
     my $nodes = @{$self}[4];
     return $nodes if defined $nodes && ! scalar @_;
     return $nodes->col(shift) if defined $nodes;
-    print STDERR "\nFailed to get the nodes.\n";  die;
+    die "Failed to get the nodes.";
 }
 
 
@@ -98,7 +101,7 @@ sub vals {
     my $vals = @{$self}[5];
     return $vals if defined $vals && ! scalar @_;
     return $vals->col(shift) if defined $vals;
-    print STDERR "\nFailed to get the function vals at the nodes.\n";  die;
+    die "Failed to get the function vals at the nodes.";
 }
 
 
@@ -127,6 +130,7 @@ sub coeffs {
     $coeffs = $A->solve($self->vals->transpose->vstack($null));
     @{$self}[6] = $coeffs;
     return $coeffs if ! scalar @_;
+    die "Failed to get PHS coefficients.";
 }
 
 ################################################################################
@@ -173,7 +177,7 @@ sub evaluate {
     };
     die if $@;
     
-    return $out->transpose;
+    return $out;
 }
 
 
