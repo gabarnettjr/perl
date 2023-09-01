@@ -458,9 +458,10 @@ sub dot {
     } else {
         
         $prod = Matrix::zeros($self->numRows(), $self->numCols());
+        
         for (my $i = 0; $i < $self->numRows(); $i++) {
             for (my $j = 0; $j < $self->numCols(); $j++) {
-                $prod->set($i, $j, $other * $self->item($i, $j));
+                $prod->set($i, $j, $self->item($i, $j) * $other);
             }
         }
     }
