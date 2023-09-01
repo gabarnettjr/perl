@@ -40,6 +40,8 @@ sub type {
     return ${$self}[0];
 }
 
+
+
 sub dims {
     # Number of dimensions of the PHS (1, 2, 3, ...)
     my $self = shift;
@@ -48,7 +50,7 @@ sub dims {
     my $dims = @{$self}[1];
     return $dims if defined $dims;
     
-    $dims = $self->nodes->numRows;
+    $dims = $self->nodes->numCols;
     @{$self}[1] = $dims;
     return $dims if ! scalar @_;
     die "Failed to get dimensions.\n";
@@ -87,7 +89,7 @@ sub nodes {
     
     my $nodes = @{$self}[4];
     return $nodes if defined $nodes && ! scalar @_;
-    return $nodes->col(shift) if defined $nodes;
+    return $nodes->row(shift) if defined $nodes;
     die "Failed to get the nodes.";
 }
 
@@ -100,7 +102,7 @@ sub vals {
     
     my $vals = @{$self}[5];
     return $vals if defined $vals && ! scalar @_;
-    return $vals->col(shift) if defined $vals;
+    return $vals->row(shift) if defined $vals;
     die "Failed to get the function vals at the nodes.";
 }
 
@@ -119,15 +121,15 @@ sub coeffs {
     eval {
         $A = $self->phi($self->r($self->nodes));
         $p = $self->poly($self->nodes);
-        $A = $A->hstack($p->transpose);
-        $null = Matrix::zeros($p->numRows, $p->numRows);
-        $A = $A->vstack($p->hstack($null));
+        $A = $A->hstack($p);
+        $null = Matrix::zeros($p->numCols, $p->numCols);
+        $A = $A->vstack($p->transpose->hstack($null));
     };
     die if $@;
     
     # Solve a linear system to get the coefficients.
-    $null = Matrix::zeros($p->numRows, 1);
-    $coeffs = $A->solve($self->vals->transpose->vstack($null));
+    $null = Matrix::zeros($p->numCols, 1);
+    $coeffs = $A->solve($self->vals->vstack($null));
     @{$self}[6] = $coeffs;
     return $coeffs if ! scalar @_;
     die "Failed to get PHS coefficients.";
@@ -141,11 +143,11 @@ sub poly {
     eval { Phs::checkNumInputs("Phs::poly", '1', scalar @_); };  die if $@;
     my $evalPts = shift;
     
-    my $poly = Matrix::ones(1, $evalPts->numCols);
+    my $poly = Matrix::ones($evalPts->numRows, 1);
     
     if ($self->polyDegree >= 1) {
         for (my $k = 0; $k < $self->dims; $k++) {
-            $poly = $poly->vstack($evalPts->row($k));
+            $poly = $poly->hstack($evalPts->col($k));
         }
     }
     
@@ -173,7 +175,7 @@ sub evaluate {
     
     my $out;
     eval {
-        $out = $self->phi($self->r($evalPts))->hstack($self->poly($evalPts)->transpose)->dot($self->coeffs);
+        $out = $self->phi($self->r($evalPts))->hstack($self->poly($evalPts))->dot($self->coeffs);
     };
     die if $@;
     
@@ -191,13 +193,13 @@ sub r {
     my $r;
     
     eval {
-        $r = Matrix::zeros($evalPts->numCols, $self->nodes->numCols);
+        $r = Matrix::zeros($evalPts->numRows, $self->nodes->numRows);
         
-        for (my $i = 0; $i < $evalPts->numCols; $i++) {
-            for (my $j = 0; $j < $self->nodes->numCols; $j++) {
+        for (my $i = 0; $i < $evalPts->numRows; $i++) {
+            for (my $j = 0; $j < $self->nodes->numRows; $j++) {
                 my $tmp = 0;
                 for (my $k = 0; $k < $self->dims; $k++) {
-                    $tmp += ($evalPts->item($k, $i) - $self->nodes->item($k, $j)) ** 2;
+                    $tmp += ($evalPts->item($i, $k) - $self->nodes->item($j, $k)) ** 2;
                 }
                 $r->set($i, $j, sqrt $tmp);
             }
@@ -232,10 +234,10 @@ sub phi {
 sub testFunc2d {
     my $evalPts = shift;
     
-    my $out = Matrix::zeros(1, $evalPts->numCols);
+    my $out = Matrix::zeros($evalPts->numRows, 1);
     
-    for (my $j = 0; $j < $out->numCols; $j++) {
-        $out->set($j, $evalPts->item(0, $j) ** 2 + $evalPts->item(1, $j));
+    for (my $j = 0; $j < $out->numRows; $j++) {
+        $out->set($j, $evalPts->item($j, 0) ** 2 + $evalPts->item($j, 1));
         # $out->set($j, 1);
     }
     
