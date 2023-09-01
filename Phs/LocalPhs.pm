@@ -120,26 +120,29 @@ sub evaluate {
     my $self = shift;
     my $evalPts = shift;
     
-    my $vals = Matrix::zeros(1, $evalPts->numCols);
-    my ($min, $ind, $i, $j, $point, $node, $dist);
+    my ($min, $ind, $i, $j, $point, $node, $dist, $out);
+    
+    $out = Matrix::zeros(1, $evalPts->numCols);
     
     for ($i = 0; $i < $evalPts->numCols; $i++) {
         $point = $evalPts->col($i);
         $min = 99;
         for ($j = 0; $j < $self->nodes->numCols; $j++) {
             $node = $self->nodes->col($j);
-            $dist = $point->minus($node)->norm;
+            $dist = ($point->minus($node))->norm;
             if ($dist < $min) {
                 $min = $dist;
                 $ind = $j;
             }
         }
-        # print "rows = " . $point->transpose->numRows . "\n";
-        # print "cols = " . $point->transpose->numCols . "\n";
-        $vals->set($i, $self->splines($ind)->evaluate($point));
+        # print "\$min = " . $point->minus($self->nodes->col($ind))->norm . "\n";
+        # print "\$min = $min\n\n";
+        # my $tmp = $self->splines($ind)->evaluate($point);
+        # print "dims = " . $tmp->numRows . " x " . $tmp->numCols . "\n";
+        $out->set($i, $self->splines($ind)->evaluate($point)->item(0));
     }
     
-    return $vals;
+    return $out;
 }
 
 ################################################################################
