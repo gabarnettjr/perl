@@ -45,7 +45,7 @@ die if $@;
 my ($phs, $estimate);
 eval {
     $phs = Phs::new($rbfExponent, $polyDegree, $nodes, $zz);
-    $estimate = $phs->evaluate($NODES);
+    $estimate = $phs->evaluate($NODES)->transpose;
     # $phs->coeffs()->disp();
 };
 die if $@;
