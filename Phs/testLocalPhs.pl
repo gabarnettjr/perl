@@ -14,8 +14,8 @@ my $a = -1;  my $b = 1;  my $n = 5;
 my $c = -1;  my $d = 1;  my $m = 5;
 
 # Define number of rows (M) and columns (N) for evaluation points.
-my $M = 8;
-my $N = 8;
+my $M = 12;
+my $N = 12;
 
 # Define the size of the stencil.
 my $stencilRadius = 1;
