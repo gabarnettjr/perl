@@ -86,24 +86,26 @@ sub splines {
     return $splines if defined $splines && ! scalar @_;
     return @{$splines}[shift] if defined $splines;
 
-    my @splines = ();
+    $splines = [];
+    my ($stencil, $vals, $j, $k);
 
-    for (my $j = 0; $j < $self->nodes->numRows; $j++) {
-        my $stencil = $self->nodes->row($j);
-        my $vals = $self->vals->row($j);
-        for (my $k = 0; $k < $self->nodes->numRows; $k++) {
+    for ($j = 0; $j < $self->nodes->numRows; $j++) {
+        $stencil = Matrix::zeros(1, $self->nodes->numCols);
+        $vals = $self->vals->row($j);
+        for ($k = 0; $k < $self->nodes->numRows; $k++) {
             if ($k != $j && $self->nodes->row($j)->minus($self->nodes->row($k))->norm < $self->stencilRadius) {
-                $stencil = $stencil->vstack($self->nodes->row($k));
+                $stencil = $stencil->vstack($self->nodes->row($k)->minus($self->nodes->row($j)));
                 $vals = $vals->vstack($self->vals->row($k));
             }
         }
         my $phs = Phs::new($self->rbfExponent, $self->polyDegree, $stencil, $vals);
-        push(@splines, $phs);
+        push(@{$splines}, $phs);
     }
     
-    @{$self}[6] = \@splines;
-    return \@splines if ! scalar @_;
-    return $splines[shift];
+    @{$self}[6] = $splines;
+    return $splines if ! scalar @_;
+    return @{$splines}[shift];
+    die "Failed to get polyharmonic spline(s).";
 }
 
 ################################################################################
@@ -134,7 +136,7 @@ sub evaluate {
                 $ind = $j;
             }
         }
-        $out->set($i, $self->splines($ind)->evaluate($point)->item(0));
+        $out->set($i, $self->splines($ind)->evaluate($point->minus($self->nodes->row($ind)))->item(0, 0));
     }
     
     return $out;
