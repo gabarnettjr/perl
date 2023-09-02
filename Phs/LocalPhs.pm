@@ -92,7 +92,7 @@ sub splines {
         my $stencil = $self->nodes->row($j);
         my $vals = $self->vals->row($j);
         for (my $k = 0; $k < $self->nodes->numRows; $k++) {
-            if ($k != $j && ($self->nodes->row($j)->minus($self->nodes->row($k)))->norm < $self->stencilRadius) {
+            if ($k != $j && $self->nodes->row($j)->minus($self->nodes->row($k))->norm < $self->stencilRadius) {
                 $stencil = $stencil->vstack($self->nodes->row($k));
                 $vals = $vals->vstack($self->vals->row($k));
             }
