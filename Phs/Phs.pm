@@ -103,7 +103,7 @@ sub vals {
     my $vals = @{$self}[5];
     return $vals if defined $vals && ! scalar @_;
     return $vals->row(shift) if defined $vals;
-    die "Failed to get the function vals at the nodes.";
+    die "Failed to get the function values at the nodes.";
 }
 
 
@@ -190,14 +190,14 @@ sub r {
     eval { Phs::checkNumInputs("Phs::r", '1', scalar @_); };  die if $@;
     my $evalPts = shift;
     
-    my $r;
+    my ($r, $i, $j, $tmp);
     
     eval {
         $r = Matrix::zeros($evalPts->numRows, $self->nodes->numRows);
         
-        for (my $i = 0; $i < $evalPts->numRows; $i++) {
-            for (my $j = 0; $j < $self->nodes->numRows; $j++) {
-                my $tmp = 0;
+        for ($i = 0; $i < $evalPts->numRows; $i++) {
+            for ($j = 0; $j < $self->nodes->numRows; $j++) {
+                $tmp = 0;
                 for (my $k = 0; $k < $self->dims; $k++) {
                     $tmp += ($evalPts->item($i, $k) - $self->nodes->item($j, $k)) ** 2;
                 }
@@ -218,10 +218,11 @@ sub phi {
     eval { Phs::checkNumInputs("Phs::phi", '1', scalar @_); };  die if $@;
     my $r = shift;
     
-    my $phi = $r->copy;
+    my ($i, $j);
+    my $phi = Matrix::zeros($r->numRows, $r->numCols);
     
-    for (my $i = 0; $i < $phi->numRows; $i++) {
-        for (my $j = 0; $j < $phi->numCols; $j++) {
+    for ($i = 0; $i < $phi->numRows; $i++) {
+        for ($j = 0; $j < $phi->numCols; $j++) {
             $phi->set($i, $j, $r->item($i, $j) ** $self->rbfExponent);
         }
     }
@@ -234,9 +235,10 @@ sub phi {
 sub testFunc2d {
     my $evalPts = shift;
     
+    my $i;
     my $out = Matrix::zeros($evalPts->numRows, 1);
     
-    for (my $i = 0; $i < $out->numRows; $i++) {
+    for ($i = 0; $i < $out->numRows; $i++) {
         $out->set($i, $evalPts->item($i, 0) ** 2 + $evalPts->item($i, 1));
     }
     
