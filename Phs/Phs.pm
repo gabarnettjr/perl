@@ -236,9 +236,8 @@ sub testFunc2d {
     
     my $out = Matrix::zeros($evalPts->numRows, 1);
     
-    for (my $j = 0; $j < $out->numRows; $j++) {
-        $out->set($j, $evalPts->item($j, 0) ** 2 + $evalPts->item($j, 1));
-        # $out->set($j, 1);
+    for (my $i = 0; $i < $out->numRows; $i++) {
+        $out->set($i, $evalPts->item($i, 0) ** 2 + $evalPts->item($i, 1));
     }
     
     return $out;
